@@ -46,10 +46,23 @@ export const deleteProject = async (req: Request, res: Response) => {
   return res.status(StatusCodes.OK).json(result);
 };
 
+export const addMember = async (req: Request, res: Response) => {
+  const projectId = req.params.projectId as string;
+  const { userId } = req.body;
+
+  const member = await projectService.addMember(projectId, userId);
+
+  return res.status(StatusCodes.CREATED).json({
+    message: "Member added to project successfully",
+    data: member,
+  });
+};
+
 export const projectController = {
   createProject,
   getAllProjects,
   getProjectById,
   updateProject,
   deleteProject,
+  addMember,
 };

@@ -1,8 +1,13 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate";
-import { createProjectSchema, updateProjectSchema } from "./projects.schema";
+import {
+  addMemberSchema,
+  createProjectSchema,
+  updateProjectSchema,
+} from "./projects.schema";
 import { projectController } from "./projects.controller";
 import { checkProjectAccess } from "../../middlewares/checkProjectAccess";
+import { requireAdmin } from "../../middlewares/auth";
 
 const router = Router();
 // projects.routes.ts
@@ -18,6 +23,13 @@ router
   .get(projectController.getProjectById)
   .patch(validate(updateProjectSchema), projectController.updateProject)
   .delete(projectController.deleteProject);
+
+router.post(
+  "/:projectId/members",
+  requireAdmin,
+  validate(addMemberSchema),
+  projectController.addMember,
+);
 
 // router.get("/:projectId", checkProjectAccess, getProjectController);
 // router.patch("/:projectId", checkProjectAccess, updateProjectController);

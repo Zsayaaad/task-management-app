@@ -1,5 +1,5 @@
 import { Role } from "@prisma/client";
-import { ConflictError } from "../../errors/customErrors";
+import { ConflictError, NotFoundError } from "../../errors/customErrors";
 import { prisma } from "../../lib/prisma";
 import { CreateProjectInput, UpdateProjectInput } from "./projects.schema";
 
@@ -114,10 +114,38 @@ export const deleteProject = async (projectId: string) => {
   return { message: "Project deleted successfully" };
 };
 
+export const addMember = async (projectId: string, userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, email: true, role: true },
+  });
+
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  const existingMember = await prisma.projectMember.findUnique({
+    where: {
+      userId_projectId: { userId, projectId },
+    },
+  });
+
+  if (existingMember) {
+    throw new ConflictError("User is already a member of this project");
+  }
+
+  await prisma.projectMember.create({
+    data: { userId, projectId },
+  });
+
+  return user;
+};
+
 export const projectService = {
   createProject,
   getAllProjects,
   getProjectById,
   updateProject,
   deleteProject,
+  addMember,
 };

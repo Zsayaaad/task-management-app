@@ -27,5 +27,10 @@ export const updateProjectSchema = z
       "At least one field (name or description) must be provided for update",
   });
 
+export const addMemberSchema = z.object({
+  userId: z.uuid().min(1, "User ID is required"),
+});
+
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
+export type AddMemberInput = z.infer<typeof addMemberSchema>;
