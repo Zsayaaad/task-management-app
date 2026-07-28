@@ -1,7 +1,7 @@
 import { Role } from "@prisma/client";
 import { ConflictError } from "../../errors/customErrors";
 import { prisma } from "../../lib/prisma";
-import { CreateProjectInput } from "./projects.schema";
+import { CreateProjectInput, UpdateProjectInput } from "./projects.schema";
 
 export const createProject = async (
   creatorId: string,
@@ -94,8 +94,30 @@ export const getProjectById = async (projectId: string) => {
   return product;
 };
 
+export const updateProject = async (
+  projectId: string,
+  data: UpdateProjectInput,
+) => {
+  const updatedProject = await prisma.project.update({
+    where: { id: projectId },
+    data,
+  });
+
+  return updatedProject;
+};
+
+export const deleteProject = async (projectId: string) => {
+  await prisma.project.delete({
+    where: { id: projectId },
+  });
+
+  return { message: "Project deleted successfully" };
+};
+
 export const projectService = {
   createProject,
   getAllProjects,
   getProjectById,
+  updateProject,
+  deleteProject,
 };

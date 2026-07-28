@@ -13,4 +13,19 @@ export const createProjectSchema = z.object({
     .optional(),
 });
 
+export const updateProjectSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, "Project name cannot be empty")
+      .max(100, "display name cannot exceed 10 characters")
+      .optional(),
+    description: z.string().optional(),
+  })
+  .refine((data) => data.name !== undefined || data.description !== undefined, {
+    message:
+      "At least one field (name or description) must be provided for update",
+  });
+
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
+export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;

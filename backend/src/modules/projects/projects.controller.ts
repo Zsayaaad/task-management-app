@@ -28,8 +28,28 @@ export const getProjectById = async (req: Request, res: Response) => {
   return res.status(StatusCodes.OK).json({ project });
 };
 
+export const updateProject = async (req: Request, res: Response) => {
+  const projectId = req.params.projectId as string;
+  const project = await projectService.updateProject(projectId, req.body);
+
+  return res.status(StatusCodes.OK).json({
+    message: "Project updated successfully",
+    project,
+  });
+};
+
+export const deleteProject = async (req: Request, res: Response) => {
+  const projectId = req.params.projectId as string;
+
+  const result = await projectService.deleteProject(projectId);
+
+  return res.status(StatusCodes.OK).json(result);
+};
+
 export const projectController = {
   createProject,
   getAllProjects,
   getProjectById,
+  updateProject,
+  deleteProject,
 };

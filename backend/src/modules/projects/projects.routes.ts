@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate";
-import { createProjectSchema } from "./projects.schema";
+import { createProjectSchema, updateProjectSchema } from "./projects.schema";
 import { projectController } from "./projects.controller";
 import { checkProjectAccess } from "../../middlewares/checkProjectAccess";
 
@@ -13,7 +13,11 @@ router
 
 router.use("/:projectId", checkProjectAccess);
 
-router.route("/:projectId").get(projectController.getProjectById);
+router
+  .route("/:projectId")
+  .get(projectController.getProjectById)
+  .patch(validate(updateProjectSchema), projectController.updateProject)
+  .delete(projectController.deleteProject);
 
 // router.get("/:projectId", checkProjectAccess, getProjectController);
 // router.patch("/:projectId", checkProjectAccess, updateProjectController);
