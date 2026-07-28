@@ -1,0 +1,74 @@
+import { ConflictError, UnauthorizedError } from "../../errors/customErrors";
+import { prisma } from "../../lib/prisma";
+import { parseRole } from "../../lib/roles";
+import { comparePassword, hashPassword } from "../../utils/hash";
+import { LoginInput, RegisterInput } from "./auth.schema";
+import { generateToken } from "../../utils/jwt";
+
+export const register = async (data: RegisterInput) => {
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
+
+  if (existingUser) {
+    throw new ConflictError("Email already exists");
+  }
+
+  const hashedPassword = await hashPassword(data.password);
+
+  const user = await prisma.user.create({
+    data: {
+      name: data.fullName,
+      email: data.email,
+      password: hashedPassword,
+      role: parseRole(data.role),
+    },
+    omit: {
+      password: true,
+    },
+  });
+
+  const token = generateToken({
+    userId: user.id,
+    role: user.role,
+  });
+
+  return { user, token };
+};
+
+export const login = async (data: LoginInput) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
+
+  const isValidUser =
+    user && (await comparePassword(data.password, user.password));
+
+  if (!isValidUser) {
+    throw new UnauthorizedError("Invalid email or password");
+  }
+
+  const token = generateToken({
+    userId: user.id,
+    role: user.role,
+  });
+
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    },
+    token,
+  };
+};
+
+export const authService = {
+  register,
+  login,
+};

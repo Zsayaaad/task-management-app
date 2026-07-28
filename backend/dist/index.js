@@ -1,0 +1,2 @@
+const animal = "Dog";
+export {};
