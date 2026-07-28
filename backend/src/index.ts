@@ -31,7 +31,7 @@ app.use(cors());
 // API Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", authenticatedUser, userRouter);
-app.use("/api/v1/products", projectRouter);
+app.use("/api/v1/products", authenticatedUser, projectRouter);
 
 // Global Error Handler
 // TRIGGERED BY OUR EXISTING ROUTES IF THERE IS A VALID REQUEST AND HAS AN ERROR

@@ -1,0 +1,35 @@
+import { Request, Response } from "express";
+import { projectService } from "./projects.service";
+import { StatusCodes } from "http-status-codes";
+
+export const createProject = async (req: Request, res: Response) => {
+  const project = await projectService.createProject(
+    req.user!.userId,
+    req.body,
+  );
+
+  return res.status(StatusCodes.CREATED).json({ project });
+};
+
+export const getAllProjects = async (req: Request, res: Response) => {
+  const projects = await projectService.getAllProjects(
+    req.user!.userId,
+    req.user!.role,
+  );
+
+  return res.status(StatusCodes.OK).json({ projects });
+};
+
+export const getProjectById = async (req: Request, res: Response) => {
+  const projectId = req.params.projectId as string;
+
+  const project = await projectService.getProjectById(projectId);
+
+  return res.status(StatusCodes.OK).json({ project });
+};
+
+export const projectController = {
+  createProject,
+  getAllProjects,
+  getProjectById,
+};
