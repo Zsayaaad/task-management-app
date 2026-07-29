@@ -8,6 +8,7 @@ declare global {
         role: Role;
       };
       project?: Project;
+      validatedQuery?: Record<string, unknown>;
     }
   }
 }

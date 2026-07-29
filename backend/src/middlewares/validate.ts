@@ -19,7 +19,11 @@ export const validate =
       });
     }
 
-    req[source] = result.data;
+    if (source === "query") {
+      req.validatedQuery = result.data as Record<string, unknown>;
+    } else {
+      req[source] = result.data;
+    }
 
     next();
   };
