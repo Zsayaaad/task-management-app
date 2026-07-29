@@ -5,10 +5,13 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import { Register, Login } from "./pages";
+import { Register, Login, DashboardLayout, Projects } from "./pages";
 
 import { registerAction } from "./pages/Register/action";
 import { loginAction } from "./pages/Login/actions";
+import { dashboardLoader } from "./pages/Dashboard/loader";
+import Loading from "./components/Loading";
+import { projectsLoader } from "./pages/Projects/loader";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -33,6 +36,19 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
     action: loginAction(queryClient),
+  },
+  {
+    path: "dashboard",
+    element: <DashboardLayout queryClient={queryClient} />,
+    loader: dashboardLoader(queryClient),
+    HydrateFallback: Loading,
+    children: [
+      {
+        index: true,
+        element: <Projects />,
+        loader: projectsLoader(queryClient),
+      },
+    ],
   },
 ]);
 
