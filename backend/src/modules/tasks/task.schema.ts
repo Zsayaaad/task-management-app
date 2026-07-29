@@ -32,9 +32,18 @@ export const createTaskBodySchema = z.object({
 
 // Schema for Query Params so we handle queries by using coerce: URL: page=1&limit=12, Zod convert it to number 1,12
 export const getAllTasksQuerySchema = z.object({
-  status: z.enum(TaskStatus).optional(),
-  priority: z.enum(TaskPriority).optional(),
-  assigneeName: z.string().min(1).optional(),
+  status: z.preprocess(
+    (val) => (val === "all" || val === "" ? undefined : val),
+    z.enum(TaskStatus).optional(),
+  ),
+  priority: z.preprocess(
+    (val) => (val === "all" || val === "" ? undefined : val),
+    z.enum(TaskPriority).optional(),
+  ),
+  assigneeName: z.preprocess(
+    (val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
+    z.string().min(1).optional(),
+  ),
   page: z.coerce.number().int().positive().optional().default(1),
   limit: z.coerce.number().int().positive().max(100).optional().default(10),
 });

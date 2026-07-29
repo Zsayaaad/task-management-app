@@ -48,20 +48,18 @@ const Projects = () => {
               className="group bg-surface-container border border-border hover:border-primary/40 rounded-xl p-5 shadow-lg shadow-black/20 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
             >
               <div>
-                {/* Project Title */}
-                <h2 className="mb-2">
-                  <Link
-                    to={`/dashboard/projects/${project.id}/tasks`}
-                    className="font-section-heading font-semibold text-lg text-on-surface hover:text-primary transition-colors line-clamp-1"
-                  >
-                    {project.name}
-                  </Link>
-                </h2>
+                <Link
+                  to={`/dashboard/projects/${project.id}/tasks`}
+                  // className="font-section-heading font-semibold text-lg text-on-surface hover:text-primary transition-colors line-clamp-1"
+                >
+                  {/* Project Title */}
+                  <h2 className="mb-2">{project.name}</h2>
 
-                {/* Description */}
-                <p className="font-body text-sm text-text-muted line-clamp-2 mb-6 min-h-[2.5rem]">
-                  {project.description || "No description provided."}
-                </p>
+                  {/* Description */}
+                  <p className="font-body text-sm text-text-muted line-clamp-2 mb-6 min-h-10">
+                    {project.description || "No description provided."}
+                  </p>
+                </Link>
               </div>
 
               {/* Card Footer Stats */}

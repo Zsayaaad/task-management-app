@@ -5,13 +5,20 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import { Register, Login, DashboardLayout, Projects } from "./pages";
+import {
+  Register,
+  Login,
+  DashboardLayout,
+  Projects,
+  ProjectTasks,
+} from "./pages";
 
 import { registerAction } from "./pages/Register/action";
 import { loginAction } from "./pages/Login/actions";
 import { dashboardLoader } from "./pages/Dashboard/loader";
 import Loading from "./components/Loading";
 import { projectsLoader } from "./pages/Projects/loader";
+import { projectTasksLoader } from "./pages/ProjectTasks/loader";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -47,6 +54,11 @@ const router = createBrowserRouter([
         index: true,
         element: <Projects />,
         loader: projectsLoader(queryClient),
+      },
+      {
+        path: "projects/:projectId/tasks",
+        element: <ProjectTasks />,
+        loader: projectTasksLoader(queryClient),
       },
     ],
   },
