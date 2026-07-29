@@ -7,9 +7,10 @@ import { connectDB } from "./lib/prisma";
 import { getEnv } from "./lib/env";
 
 // routes
-import authRoutes from "./modules/auth/auth.routes";
+import authRouter from "./modules/auth/auth.routes";
 import userRouter from "./modules/users/user.routes";
 import projectRouter from "./modules/projects/projects.routes";
+import taskRouter from "./modules/tasks/task.routes";
 
 // middlewares
 import { errorHandlerMiddleware } from "./middlewares/errorHandler";
@@ -29,9 +30,10 @@ app.use(cors());
 // app.post("/webhooks/polar", rawJson, (req, res) => {});
 
 // API Routes
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", authenticatedUser, userRouter);
-app.use("/api/v1/products", authenticatedUser, projectRouter);
+app.use("/api/v1/projects", authenticatedUser, projectRouter);
+app.use("/api/v1/tasks", authenticatedUser, taskRouter);
 
 // Global Error Handler
 // TRIGGERED BY OUR EXISTING ROUTES IF THERE IS A VALID REQUEST AND HAS AN ERROR

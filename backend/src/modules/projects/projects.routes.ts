@@ -31,11 +31,10 @@ router.post(
   projectController.addMember,
 );
 
-// router.get("/:projectId", checkProjectAccess, getProjectController);
-// router.patch("/:projectId", checkProjectAccess, updateProjectController);
-// router.delete("/:projectId", checkProjectAccess, deleteProjectController);
-
-// // وحتى الـ tasks routes (لو nested جوا project)
-// router.get("/:projectId/tasks", checkProjectAccess, getTasksController);
+router.delete(
+  "/:projectId/members/:userId",
+  requireAdmin,
+  projectController.removeMember,
+);
 
 export default router;

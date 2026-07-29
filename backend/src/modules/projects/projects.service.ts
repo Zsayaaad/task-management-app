@@ -1,7 +1,15 @@
 import { Role } from "@prisma/client";
-import { ConflictError, NotFoundError } from "../../errors/customErrors";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+} from "../../errors/customErrors";
 import { prisma } from "../../lib/prisma";
-import { CreateProjectInput, UpdateProjectInput } from "./projects.schema";
+import {
+  AddMemberInput,
+  CreateProjectInput,
+  UpdateProjectInput,
+} from "./projects.schema";
 
 export const createProject = async (
   creatorId: string,
@@ -114,9 +122,9 @@ export const deleteProject = async (projectId: string) => {
   return { message: "Project deleted successfully" };
 };
 
-export const addMember = async (projectId: string, userId: string) => {
+export const addMember = async (projectId: string, data: AddMemberInput) => {
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { id: data.userId },
     select: { id: true, name: true, email: true, role: true },
   });
 
@@ -126,7 +134,7 @@ export const addMember = async (projectId: string, userId: string) => {
 
   const existingMember = await prisma.projectMember.findUnique({
     where: {
-      userId_projectId: { userId, projectId },
+      userId_projectId: { userId: data.userId, projectId },
     },
   });
 
@@ -135,11 +143,38 @@ export const addMember = async (projectId: string, userId: string) => {
   }
 
   await prisma.projectMember.create({
-    data: { userId, projectId },
+    data: { userId: data.userId, projectId },
   });
 
   return user;
 };
+
+export async function removeMember(
+  projectId: string,
+  userId: string,
+  requesterId: string,
+) {
+  // Admin
+  if (userId === requesterId) {
+    throw new BadRequestError("You cannot remove yourself from the project");
+  }
+
+  const membership = await prisma.projectMember.findUnique({
+    where: {
+      userId_projectId: { userId, projectId },
+    },
+  });
+
+  if (!membership) {
+    throw new NotFoundError("User is not a member of this project");
+  }
+
+  await prisma.projectMember.delete({
+    where: {
+      userId_projectId: { userId, projectId },
+    },
+  });
+}
 
 export const projectService = {
   createProject,
@@ -148,4 +183,5 @@ export const projectService = {
   updateProject,
   deleteProject,
   addMember,
+  removeMember,
 };

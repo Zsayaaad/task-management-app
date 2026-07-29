@@ -58,6 +58,17 @@ export const addMember = async (req: Request, res: Response) => {
   });
 };
 
+export async function removeMember(req: Request, res: Response) {
+  const projectId = req.params.projectId as string;
+  const userId = req.params.userId as string;
+
+  await projectService.removeMember(projectId, userId, req.user!.userId);
+
+  res.status(StatusCodes.OK).json({
+    message: "Member removed successfully",
+  });
+}
+
 export const projectController = {
   createProject,
   getAllProjects,
@@ -65,4 +76,5 @@ export const projectController = {
   updateProject,
   deleteProject,
   addMember,
+  removeMember,
 };
