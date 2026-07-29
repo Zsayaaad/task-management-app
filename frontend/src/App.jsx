@@ -8,6 +8,7 @@ import {
 import { Register, Login } from "./pages";
 
 import { registerAction } from "./pages/Register/action";
+import { loginAction } from "./pages/Login/actions";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    action: loginAction(queryClient),
   },
 ]);
 
