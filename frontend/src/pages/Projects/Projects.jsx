@@ -15,14 +15,24 @@ const Projects = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Page Header */}
-      <div className="pb-4 border-b border-border">
-        <h1 className="font-page-title text-2xl font-bold text-on-surface">
-          Projects
-        </h1>
-        <p className="font-body text-sm text-text-muted mt-1">
-          Select a project workspace to view tasks and collaborators
-        </p>
+      {/* Page Header with "Add New Project" Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
+        <div>
+          <h1 className="font-page-title text-2xl font-bold text-on-surface">
+            Projects
+          </h1>
+          <p className="font-body text-sm text-text-muted mt-1">
+            Select a project workspace to view tasks and collaborators
+          </p>
+        </div>
+
+        <Link
+          to="/dashboard/add-project"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 transition-colors shadow-sm shrink-0"
+        >
+          <span className="material-symbols-outlined text-lg">add</span>
+          Add New Project
+        </Link>
       </div>
 
       {/* Projects Grid / Empty State */}
@@ -39,6 +49,15 @@ const Projects = () => {
           <p className="font-body text-sm text-text-muted">
             There are no projects available in the database.
           </p>
+          <Link
+            to="/dashboard/add-project"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline pt-2"
+          >
+            Create your first project
+            <span className="material-symbols-outlined text-base">
+              arrow_forward
+            </span>
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -48,18 +67,30 @@ const Projects = () => {
               className="group bg-surface-container border border-border hover:border-primary/40 rounded-xl p-5 shadow-lg shadow-black/20 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
             >
               <div>
-                <Link
-                  to={`/dashboard/projects/${project.id}/tasks`}
-                  // className="font-section-heading font-semibold text-lg text-on-surface hover:text-primary transition-colors line-clamp-1"
-                >
-                  {/* Project Title */}
-                  <h2 className="mb-2">{project.name}</h2>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <Link
+                    to={`/dashboard/projects/${project.id}/tasks`}
+                    className="font-section-heading font-semibold text-lg text-on-surface hover:text-primary transition-colors line-clamp-1"
+                  >
+                    {project.name}
+                  </Link>
 
-                  {/* Description */}
-                  <p className="font-body text-sm text-text-muted line-clamp-2 mb-6 min-h-10">
-                    {project.description || "No description provided."}
-                  </p>
-                </Link>
+                  {/* Edit Project Icon Button */}
+                  <Link
+                    to={`/dashboard/editProject/${project.id}`}
+                    className="text-text-muted hover:text-primary transition-colors p-1"
+                    title="Edit Project"
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      edit
+                    </span>
+                  </Link>
+                </div>
+
+                {/* Description */}
+                <p className="font-body text-sm text-text-muted line-clamp-2 mb-6 min-h-10">
+                  {project.description || "No description provided."}
+                </p>
               </div>
 
               {/* Card Footer Stats */}
