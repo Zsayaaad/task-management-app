@@ -16,24 +16,34 @@ const ProjectTasks = () => {
   return (
     <ProjectTasksContext.Provider value={{ data, searchValues, projectId }}>
       <main className="max-w-7xl mx-auto">
-        {/* Page Header */}
-        <header className="pb-4 border-b border-border mb-6">
+        {/* Header Header Navigation & Add Task Button */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border mb-6">
+          <div>
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-primary transition-colors mb-2"
+            >
+              <span className="material-symbols-outlined text-base">
+                arrow_back
+              </span>
+              Back to Projects
+            </Link>
+            <h1 className="font-page-title text-2xl font-bold text-on-surface">
+              Project Tasks
+            </h1>
+            <p className="font-body text-sm text-text-muted mt-1">
+              Manage, filter, and track active project tasks.
+            </p>
+          </div>
+
           <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-primary transition-colors mb-2"
+            to={`/dashboard/projects/${projectId}/add-task`}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 transition-colors shadow-sm shrink-0"
           >
-            <span className="material-symbols-outlined text-base">
-              arrow_back
-            </span>
-            Back to Projects
+            <span className="material-symbols-outlined text-lg">add</span>
+            Add Task
           </Link>
-          <h1 className="font-page-title text-2xl font-bold text-on-surface">
-            Project Tasks
-          </h1>
-          <p className="font-body text-sm text-text-muted mt-1">
-            Manage, filter, and track active project tasks.
-          </p>
-        </header>
+        </div>
 
         {/* Search & Filters */}
         <SearchFilterContainer />

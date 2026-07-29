@@ -21,4 +21,3 @@ export const editProjectAction =
       return error;
     }
   };
-

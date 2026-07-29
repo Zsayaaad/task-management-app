@@ -122,6 +122,19 @@ export const deleteProject = async (projectId: string) => {
   return { message: "Project deleted successfully" };
 };
 
+export const getProjectMembers = async (projectId: string) => {
+  const members = await prisma.projectMember.findMany({
+    where: { projectId },
+    include: {
+      user: {
+        select: { id: true, name: true, email: true, role: true },
+      },
+    },
+  });
+
+  return members.map((m) => m.user);
+};
+
 export const addMember = async (projectId: string, data: AddMemberInput) => {
   const user = await prisma.user.findUnique({
     where: { id: data.userId },
@@ -180,6 +193,7 @@ export const projectService = {
   createProject,
   getAllProjects,
   getProjectById,
+  getProjectMembers,
   updateProject,
   deleteProject,
   addMember,

@@ -13,6 +13,7 @@ import {
   Projects,
   ProjectTasks,
   AddProject,
+  AddTask,
 } from "./pages";
 
 import { registerAction } from "./pages/Register/action";
@@ -25,6 +26,8 @@ import { addProjectAction } from "./pages/AddProject/action";
 import EditProject from "./pages/EditProject/EditProject";
 import { editProjectLoader } from "./pages/EditProject/loader";
 import { editProjectAction } from "./pages/EditProject/action";
+import { addTaskLoader } from "./pages/AddTask/loader";
+import { addTaskAction } from "./pages/AddTask/action";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -76,6 +79,12 @@ const router = createBrowserRouter([
         element: <EditProject />,
         loader: editProjectLoader(queryClient),
         action: editProjectAction(queryClient),
+      },
+      {
+        path: "projects/:projectId/add-task",
+        element: <AddTask />,
+        loader: addTaskLoader(queryClient),
+        action: addTaskAction(queryClient),
       },
     ],
   },

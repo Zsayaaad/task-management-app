@@ -11,9 +11,6 @@ import { taskController } from "./task.controller";
 
 const router = Router();
 
-/**
-DELETE /:projectId/tasks/:taskId            → deleteTask
-*/
 router.post(
   "/:projectId",
   checkProjectAccess,

@@ -24,6 +24,11 @@ router
   .patch(validate(updateProjectSchema), projectController.updateProject)
   .delete(projectController.deleteProject);
 
+router.get(
+  "/:projectId/members",
+  projectController.getProjectMembers,
+);
+
 router.post(
   "/:projectId/members",
   requireAdmin,

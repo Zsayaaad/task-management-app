@@ -18,11 +18,6 @@ export const createTaskBodySchema = z.object({
 
   priority: z.enum(TaskPriority).optional(),
 
-  // dueDate: z.iso
-  //   .datetime({
-  //     message: "Invalid due date format. Must be an ISO-8601 date string",
-  //   })
-  //   .min(1, "Due date is required"),
   dueDate: z
     .string({ error: "Due date is required" })
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format. Must be YYYY-MM-DD"),
