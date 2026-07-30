@@ -210,7 +210,11 @@ export const updateTask = async (
 
   const updatedTask = await prisma.task.update({
     where: { id: taskId },
-    data,
+    data: {
+      ...data,
+      // Prisma expects a `Date` instance or full ISO timestamp
+      ...(data.dueDate ? { dueDate: new Date(data.dueDate) } : {}),
+    },
     include: {
       creator: { select: { id: true, name: true, email: true } },
       assignee: { select: { id: true, name: true, email: true } },
