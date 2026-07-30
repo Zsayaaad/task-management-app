@@ -1,7 +1,8 @@
+import { Link } from "react-router-dom";
 import { useProjectTasksContext } from "../context/ProjectTasksContext";
 
 const TasksContainer = () => {
-  const { data } = useProjectTasksContext();
+  const { data, projectId } = useProjectTasksContext();
   const tasks = data?.tasks || [];
 
   const formatDate = (dateString) => {
@@ -87,8 +88,8 @@ const TasksContainer = () => {
             </p>
           </div>
 
-          {/* Assignee & Date */}
-          <div className="flex items-center justify-between md:justify-end gap-6 pt-3 md:pt-0 border-t md:border-t-0 border-border/50 text-xs text-text-muted shrink-0">
+          {/* Assignee, Date & Actions */}
+          <div className="flex items-center justify-between md:justify-end gap-4 md:gap-6 pt-3 md:pt-0 border-t md:border-t-0 border-border/50 text-xs text-text-muted shrink-0">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-xs">
                 {task.assignee?.name
@@ -109,6 +110,15 @@ const TasksContainer = () => {
               </span>
               <span>{formatDate(task.dueDate)}</span>
             </div>
+
+            {/* Edit Task Icon Link */}
+            <Link
+              to={`/dashboard/projects/${projectId}/tasks/${task.id}/edit`}
+              className="p-1.5 text-text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-colors border border-border/60 shrink-0"
+              title="Edit Task"
+            >
+              <span className="material-symbols-outlined text-lg">edit</span>
+            </Link>
           </div>
         </div>
       ))}
