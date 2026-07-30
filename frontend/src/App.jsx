@@ -17,6 +17,7 @@ import {
   AddMember,
   ProjectMembers,
   EditTask,
+  Profile,
 } from "./pages";
 
 import { registerAction } from "./pages/Register/action";
@@ -38,6 +39,7 @@ import { deleteProjectAction } from "./pages/DeleteProject/action";
 import { editTaskLoader } from "./pages/EditTask/loader";
 import { editTaskAction } from "./pages/EditTask/action";
 import { deleteTaskAction } from "./pages/ProjectTasks/actions";
+import { profileLoader } from "./pages/Profile/loader";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -123,6 +125,11 @@ const router = createBrowserRouter([
       {
         path: "projects/:projectId/tasks/:taskId/delete",
         action: deleteTaskAction(queryClient),
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+        loader: profileLoader(queryClient),
       },
     ],
   },

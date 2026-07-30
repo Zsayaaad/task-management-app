@@ -8,3 +8,4 @@ export { default as AddTask } from "./AddTask/AddTask";
 export { default as AddMember } from "./AddMember/AddMember";
 export { default as ProjectMembers } from "./ProjectMembers/ProjectMembers";
 export { default as EditTask } from "./EditTask/EditTask";
+export { default as Profile } from "./Profile/Profile";
