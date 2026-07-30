@@ -96,17 +96,16 @@ const Projects = () => {
               {/* Card Footer Interactive Buttons */}
               <div className="pt-4 border-t border-border/50 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 text-xs font-medium min-w-0 flex-wrap">
-                  {/* Clickable Members Box -> Adds Member */}
+                  {/* Clickable Members Box -> Navigates to Manage Members Page */}
                   <Link
-                    to={`/dashboard/projects/${project.id}/add-member`}
+                    to={`/dashboard/projects/${project.id}/members`}
                     className="bg-surface-bright hover:bg-primary/10 hover:border-primary/50 text-on-surface px-2.5 py-1.5 rounded-lg border border-border/60 flex items-center gap-1 transition-all group/member whitespace-nowrap"
-                    title="Click to Add Member"
+                    title="Manage Project Members"
                   >
                     <span className="material-symbols-outlined text-base text-primary group-hover/member:scale-110 transition-transform">
-                      group_add
+                      group
                     </span>
                     <span>{project._count?.members ?? 0} Members</span>
-                    <span className="text-primary font-bold">+</span>
                   </Link>
 
                   {/* Clickable Tasks Box -> Opens Tasks */}

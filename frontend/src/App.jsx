@@ -15,6 +15,7 @@ import {
   AddProject,
   AddTask,
   AddMember,
+  ProjectMembers,
 } from "./pages";
 
 import { registerAction } from "./pages/Register/action";
@@ -30,6 +31,8 @@ import { editProjectAction } from "./pages/EditProject/action";
 import { addTaskLoader } from "./pages/AddTask/loader";
 import { addTaskAction } from "./pages/AddTask/action";
 import { addMemberAction } from "./pages/AddMember/action";
+import { projectMembersLoader } from "./pages/ProjectMembers/loader";
+import { deleteMemberAction } from "./pages/ProjectMembers/action";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -92,6 +95,15 @@ const router = createBrowserRouter([
         path: "projects/:projectId/add-member",
         element: <AddMember />,
         action: addMemberAction(queryClient),
+      },
+      {
+        path: "projects/:projectId/members",
+        element: <ProjectMembers />,
+        loader: projectMembersLoader(queryClient),
+      },
+      {
+        path: "projects/:projectId/members/:memberId/delete",
+        action: deleteMemberAction(queryClient),
       },
     ],
   },
