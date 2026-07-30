@@ -64,7 +64,7 @@ const Projects = () => {
           {projects.map((project) => (
             <div
               key={project.id}
-              className="group bg-surface-container border border-border hover:border-primary/40 rounded-xl p-5 shadow-lg shadow-black/20 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
+              className="group bg-surface-container border border-border hover:border-primary/40 rounded-xl p-5 shadow-lg shadow-black/20 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between overflow-hidden"
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
@@ -78,7 +78,7 @@ const Projects = () => {
                   {/* Edit Project Icon Button */}
                   <Link
                     to={`/dashboard/editProject/${project.id}`}
-                    className="text-text-muted hover:text-primary transition-colors p-1"
+                    className="text-text-muted hover:text-primary transition-colors p-1 shrink-0"
                     title="Edit Project"
                   >
                     <span className="material-symbols-outlined text-lg">
@@ -93,53 +93,26 @@ const Projects = () => {
                 </p>
               </div>
 
-              {/* Card Footer Stats */}
-              {/* <div className="pt-4 border-t border-border/50 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-medium text-text-muted">
-                  <span className="bg-surface-bright px-2.5 py-1 rounded-md border border-border/60 flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-sm text-primary">
-                      group
-                    </span>
-                    {project._count?.members ?? 0} Members
-                  </span>
-                  <span className="bg-surface-bright px-2.5 py-1 rounded-md border border-border/60 flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-sm text-primary">
-                      task_alt
-                    </span>
-                    {project._count?.tasks ?? 0} Tasks
-                  </span>
-                </div>
-
-                <Link
-                  to={`/dashboard/projects/${project.id}/tasks`}
-                  className="text-text-muted hover:text-primary transition-colors p-1 flex items-center justify-center"
-                  title="View Project Tasks"
-                >
-                  <span className="material-symbols-outlined text-xl">
-                    arrow_forward
-                  </span>
-                </Link>
-              </div> */}
               {/* Card Footer Interactive Buttons */}
-              <div className="pt-4 border-t border-border/50 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-medium">
+              <div className="pt-4 border-t border-border/50 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-xs font-medium min-w-0 flex-wrap">
                   {/* Clickable Members Box -> Adds Member */}
                   <Link
                     to={`/dashboard/projects/${project.id}/add-member`}
-                    className="bg-surface-bright hover:bg-primary/10 hover:border-primary/50 text-on-surface px-3 py-1.5 rounded-lg border border-border/60 flex items-center gap-1.5 transition-all group/member"
+                    className="bg-surface-bright hover:bg-primary/10 hover:border-primary/50 text-on-surface px-2.5 py-1.5 rounded-lg border border-border/60 flex items-center gap-1 transition-all group/member whitespace-nowrap"
                     title="Click to Add Member"
                   >
                     <span className="material-symbols-outlined text-base text-primary group-hover/member:scale-110 transition-transform">
                       group_add
                     </span>
                     <span>{project._count?.members ?? 0} Members</span>
-                    <span className="text-primary font-bold ml-0.5">+</span>
+                    <span className="text-primary font-bold">+</span>
                   </Link>
 
                   {/* Clickable Tasks Box -> Opens Tasks */}
                   <Link
                     to={`/dashboard/projects/${project.id}/tasks`}
-                    className="bg-surface-bright hover:bg-primary/10 hover:border-primary/50 text-on-surface px-3 py-1.5 rounded-lg border border-border/60 flex items-center gap-1.5 transition-all group/task"
+                    className="bg-surface-bright hover:bg-primary/10 hover:border-primary/50 text-on-surface px-2.5 py-1.5 rounded-lg border border-border/60 flex items-center gap-1 transition-all group/task whitespace-nowrap"
                     title="View Project Tasks"
                   >
                     <span className="material-symbols-outlined text-base text-primary group-hover/task:scale-110 transition-transform">
@@ -152,7 +125,7 @@ const Projects = () => {
                 {/* Quick Navigation Arrow */}
                 <Link
                   to={`/dashboard/projects/${project.id}/tasks`}
-                  className="text-text-muted hover:text-primary transition-colors p-1"
+                  className="text-text-muted hover:text-primary transition-colors p-1 shrink-0"
                   title="Open Project"
                 >
                   <span className="material-symbols-outlined text-xl">
