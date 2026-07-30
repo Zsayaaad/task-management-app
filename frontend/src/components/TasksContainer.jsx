@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Form, Link } from "react-router-dom";
 import { useProjectTasksContext } from "../context/ProjectTasksContext";
 
 const TasksContainer = () => {
   const { data, projectId } = useProjectTasksContext();
   const tasks = data?.tasks || [];
+  const [selectedTaskToDelete, setSelectedTaskToDelete] = useState(null);
 
   const formatDate = (dateString) => {
     if (!dateString) return "No due date";
@@ -89,7 +91,7 @@ const TasksContainer = () => {
           </div>
 
           {/* Assignee, Date & Actions */}
-          <div className="flex items-center justify-between md:justify-end gap-4 md:gap-6 pt-3 md:pt-0 border-t md:border-t-0 border-border/50 text-xs text-text-muted shrink-0">
+          <div className="flex items-center justify-between md:justify-end gap-3 md:gap-4 pt-3 md:pt-0 border-t md:border-t-0 border-border/50 text-xs text-text-muted shrink-0">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-bold text-xs">
                 {task.assignee?.name
@@ -111,17 +113,71 @@ const TasksContainer = () => {
               <span>{formatDate(task.dueDate)}</span>
             </div>
 
-            {/* Edit Task Icon Link */}
-            <Link
-              to={`/dashboard/projects/${projectId}/tasks/${task.id}/edit`}
-              className="p-1.5 text-text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-colors border border-border/60 shrink-0"
-              title="Edit Task"
-            >
-              <span className="material-symbols-outlined text-lg">edit</span>
-            </Link>
+            {/* Action Buttons: Edit & Delete */}
+            <div className="flex items-center gap-1">
+              <Link
+                to={`/dashboard/projects/${projectId}/tasks/${task.id}/edit`}
+                className="p-1.5 text-text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-colors border border-border/60 shrink-0"
+                title="Edit Task"
+              >
+                <span className="material-symbols-outlined text-lg">edit</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTaskToDelete(task)}
+                className="p-1.5 text-text-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-colors border border-border/60 shrink-0"
+                title="Delete Task"
+              >
+                <span className="material-symbols-outlined text-lg">
+                  delete
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       ))}
+
+      {/* Delete Task Confirmation Modal */}
+      {selectedTaskToDelete && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-surface-container border border-border rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <h3 className="font-section-heading text-lg font-bold text-on-surface">
+              Delete Task
+            </h3>
+            <p className="text-sm text-text-muted">
+              Are you sure you want to delete{" "}
+              <strong className="text-on-surface font-semibold">
+                "{selectedTaskToDelete.title}"
+              </strong>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
+              <button
+                type="button"
+                onClick={() => setSelectedTaskToDelete(null)}
+                className="px-4 py-2 border border-border text-on-surface hover:bg-surface-bright rounded-lg text-sm transition-colors"
+              >
+                Cancel
+              </button>
+
+              <Form
+                method="post"
+                action={`/dashboard/projects/${projectId}/tasks/${selectedTaskToDelete.id}/delete`}
+                onSubmit={() => setSelectedTaskToDelete(null)}
+              >
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-danger text-white hover:bg-danger/90 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
+                  Execute_Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
