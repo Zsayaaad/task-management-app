@@ -1,11 +1,11 @@
-import { NotFoundError, UnauthorizedError } from "../../errors/customErrors";
-import { prisma } from "../../lib/prisma";
-import { comparePassword, hashPassword } from "../../utils/hash";
+import { NotFoundError, UnauthorizedError } from "../../errors/customErrors.js";
+import { prisma } from "../../lib/prisma.js";
+import { comparePassword, hashPassword } from "../../utils/hash.js";
 import {
   ChangePasswordInput,
   DeleteAccountInput,
   UpdateProfileInput,
-} from "./user.schema";
+} from "./user.schema.js";
 
 export const getCurrentUser = async (userId: string) => {
   const user = await prisma.user.findUnique({

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { taskService } from "./task.service";
-import { GetAllTasksQueryInput } from "./task.schema";
+import { taskService } from "./task.service.js";
+import { GetAllTasksQueryInput } from "./task.schema.js";
 
 export const createTask = async (req: Request, res: Response) => {
   const projectId = req.params.projectId as string;

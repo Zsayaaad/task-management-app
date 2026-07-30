@@ -1,13 +1,13 @@
 import { Router } from "express";
 
-import { checkProjectAccess } from "../../middlewares/checkProjectAccess";
+import { checkProjectAccess } from "../../middlewares/checkProjectAccess.js";
 import {
   createTaskBodySchema,
   getAllTasksQuerySchema,
   updateTaskBodySchema,
-} from "./task.schema";
-import { validate } from "../../middlewares/validate";
-import { taskController } from "./task.controller";
+} from "./task.schema.js";
+import { validate } from "../../middlewares/validate.js";
+import { taskController } from "./task.controller.js";
 
 const router = Router();
 

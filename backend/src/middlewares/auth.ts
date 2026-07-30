@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { Role } from "@prisma/client";
-import { verifyToken } from "../utils/jwt";
+import { verifyToken } from "../utils/jwt.js";
 import {
   UnauthenticatedError,
   UnauthorizedError,
-} from "../errors/customErrors";
-import { isAdmin } from "../lib/roles";
+} from "../errors/customErrors.js";
+import { isAdmin } from "../lib/roles.js";
 
 export interface AuthenticatedUserPayload {
   userId: string;

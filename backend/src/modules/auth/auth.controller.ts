@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { authService } from "./auth.service";
-import { clearAuthCookie, setAuthCookie } from "../../utils/cookies";
+import { authService } from "./auth.service.js";
+import { clearAuthCookie, setAuthCookie } from "../../utils/cookies.js";
 
 export const register = async (req: Request, res: Response) => {
   const { user, token } = await authService.register(req.body);

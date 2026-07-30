@@ -1,9 +1,9 @@
-import { ConflictError, UnauthorizedError } from "../../errors/customErrors";
-import { prisma } from "../../lib/prisma";
-import { parseRole } from "../../lib/roles";
-import { comparePassword, hashPassword } from "../../utils/hash";
-import { LoginInput, RegisterInput } from "./auth.schema";
-import { generateToken } from "../../utils/jwt";
+import { ConflictError, UnauthorizedError } from "../../errors/customErrors.js";
+import { prisma } from "../../lib/prisma.js";
+import { parseRole } from "../../lib/roles.js";
+import { comparePassword, hashPassword } from "../../utils/hash.js";
+import { LoginInput, RegisterInput } from "./auth.schema.js";
+import { generateToken } from "../../utils/jwt.js";
 
 export const register = async (data: RegisterInput) => {
   const existingUser = await prisma.user.findUnique({

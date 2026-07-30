@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { getEnv } from "../lib/env";
+import { getEnv } from "../lib/env.js";
 
 export const generateToken = (payload: object) => {
   const env = getEnv();

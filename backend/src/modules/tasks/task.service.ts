@@ -3,13 +3,13 @@ import {
   BadRequestError,
   NotFoundError,
   UnauthorizedError,
-} from "../../errors/customErrors";
-import { prisma } from "../../lib/prisma";
+} from "../../errors/customErrors.js";
+import { prisma } from "../../lib/prisma.js";
 import {
   CreateTaskInput,
   GetAllTasksQueryInput,
   UpdateTaskInput,
-} from "./task.schema";
+} from "./task.schema.js";
 
 export const createTask = async (
   projectId: string,
@@ -112,7 +112,7 @@ export const getAllTasks = async (
           select: { id: true, name: true, email: true },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
     }),
   ]);
   const totalPages = Math.ceil(totalTasks / limit);

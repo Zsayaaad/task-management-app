@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { projectService } from "./projects.service";
+import { projectService } from "./projects.service.js";
 import { StatusCodes } from "http-status-codes";
 
 export const createProject = async (req: Request, res: Response) => {

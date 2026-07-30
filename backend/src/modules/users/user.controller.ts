@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { userService } from "./user.service";
+import { userService } from "./user.service.js";
 import { StatusCodes } from "http-status-codes";
-import { clearAuthCookie } from "../../utils/cookies";
+import { clearAuthCookie } from "../../utils/cookies.js";
 
 export const getCurrentUser = async (req: Request, res: Response) => {
   const user = await userService.getCurrentUser(req.user!.userId);

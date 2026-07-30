@@ -6,18 +6,18 @@ import cors from "cors";
 import fs from "node:fs";
 import path from "node:path";
 
-import { connectDB } from "./lib/prisma";
-import { getEnv } from "./lib/env";
+import { connectDB } from "./lib/prisma.js";
+import { getEnv } from "./lib/env.js";
 
 // routes
-import authRouter from "./modules/auth/auth.routes";
-import userRouter from "./modules/users/user.routes";
-import projectRouter from "./modules/projects/projects.routes";
-import taskRouter from "./modules/tasks/task.routes";
+import authRouter from "./modules/auth/auth.routes.js";
+import userRouter from "./modules/users/user.routes.js";
+import projectRouter from "./modules/projects/projects.routes.js";
+import taskRouter from "./modules/tasks/task.routes.js";
 
 // middlewares
-import { errorHandlerMiddleware } from "./middlewares/errorHandler";
-import { authenticatedUser } from "./middlewares/auth";
+import { errorHandlerMiddleware } from "./middlewares/errorHandler.js";
+import { authenticatedUser } from "./middlewares/auth.js";
 
 const env = getEnv();
 

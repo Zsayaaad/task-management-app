@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { NotFoundError, UnauthorizedError } from "../errors/customErrors";
-import { prisma } from "../lib/prisma";
+import { NotFoundError, UnauthorizedError } from "../errors/customErrors.js";
+import { prisma } from "../lib/prisma.js";
 import { Role } from "@prisma/client";
 
 export const checkProjectAccess = async (

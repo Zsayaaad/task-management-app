@@ -3,13 +3,13 @@ import {
   BadRequestError,
   ConflictError,
   NotFoundError,
-} from "../../errors/customErrors";
-import { prisma } from "../../lib/prisma";
+} from "../../errors/customErrors.js";
+import { prisma } from "../../lib/prisma.js";
 import {
   AddMemberInput,
   CreateProjectInput,
   UpdateProjectInput,
-} from "./projects.schema";
+} from "./projects.schema.js";
 
 export const createProject = async (
   creatorId: string,
@@ -94,7 +94,7 @@ export const getProjectById = async (projectId: string) => {
         },
       },
       tasks: {
-        orderBy: { createdAt: "desc" },
+        orderBy: { updatedAt: "desc" },
       },
     },
   });

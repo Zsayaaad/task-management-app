@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { validate } from "../../middlewares/validate";
+import { validate } from "../../middlewares/validate.js";
 import {
   addMemberSchema,
   createProjectSchema,
   updateProjectSchema,
-} from "./projects.schema";
-import { projectController } from "./projects.controller";
-import { checkProjectAccess } from "../../middlewares/checkProjectAccess";
-import { requireAdmin } from "../../middlewares/auth";
+} from "./projects.schema.js";
+import { projectController } from "./projects.controller.js";
+import { checkProjectAccess } from "../../middlewares/checkProjectAccess.js";
+import { requireAdmin } from "../../middlewares/auth.js";
 
 const router = Router();
 // projects.routes.ts
