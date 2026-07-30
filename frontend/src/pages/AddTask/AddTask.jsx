@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { projectMembersQuery } from "./loader";
+import { TASK_STATUS, TASK_PRIORITY } from "../../utils/constants";
 
 const AddTask = () => {
   const { projectId } = useParams();
@@ -120,12 +121,16 @@ const AddTask = () => {
               <select
                 id="status"
                 name="status"
-                defaultValue={actionData?.fields?.status || "TODO"}
+                defaultValue={actionData?.fields?.status || TASK_STATUS.TODO}
                 className="w-full px-3.5 py-2.5 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
               >
-                <option value="TODO">To Do</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="DONE">Done</option>
+                {Object.values(TASK_STATUS).map((itemValue) => {
+                  return (
+                    <option key={itemValue} value={itemValue}>
+                      {itemValue}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
@@ -140,12 +145,16 @@ const AddTask = () => {
               <select
                 id="priority"
                 name="priority"
-                defaultValue={actionData?.fields?.priority || "MEDIUM"}
+                defaultValue={actionData?.fields?.priority || TASK_PRIORITY.MEDIUM}
                 className="w-full px-3.5 py-2.5 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
               >
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
+                {Object.values(TASK_PRIORITY).map((itemValue) => {
+                  return (
+                    <option key={itemValue} value={itemValue}>
+                      {itemValue}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>

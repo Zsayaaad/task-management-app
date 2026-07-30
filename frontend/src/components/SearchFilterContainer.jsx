@@ -1,5 +1,7 @@
 import { Form, Link, useSubmit } from "react-router-dom";
 import { useProjectTasksContext } from "../context/ProjectTasksContext";
+import { TASK_STATUS, TASK_PRIORITY } from "../utils/constants";
+
 
 const SearchFilterContainer = () => {
   const { searchValues, projectId } = useProjectTasksContext();
@@ -53,9 +55,11 @@ const SearchFilterContainer = () => {
               className="w-full px-3 py-2 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
             >
               <option value="all">All Priorities</option>
-              <option value="HIGH">High</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="LOW">Low</option>
+              {Object.values(TASK_PRIORITY).map((itemValue) => (
+                <option key={itemValue} value={itemValue}>
+                  {itemValue}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -71,9 +75,11 @@ const SearchFilterContainer = () => {
               className="w-full px-3 py-2 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
             >
               <option value="all">All Statuses</option>
-              <option value="TODO">To Do</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="DONE">Done</option>
+              {Object.values(TASK_STATUS).map((itemValue) => (
+                <option key={itemValue} value={itemValue}>
+                  {itemValue}
+                </option>
+              ))}
             </select>
           </div>
 

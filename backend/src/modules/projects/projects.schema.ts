@@ -27,7 +27,9 @@ export const updateProjectSchema = z
   });
 
 export const addMemberSchema = z.object({
-  userId: z.uuid().min(1, "User ID is required"),
+  email: z.email({
+    error: "Invalid email format",
+  }),
 });
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;

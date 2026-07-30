@@ -137,7 +137,7 @@ export const getProjectMembers = async (projectId: string) => {
 
 export const addMember = async (projectId: string, data: AddMemberInput) => {
   const user = await prisma.user.findUnique({
-    where: { id: data.userId },
+    where: { email: data.email },
     select: { id: true, name: true, email: true, role: true },
   });
 
@@ -147,7 +147,7 @@ export const addMember = async (projectId: string, data: AddMemberInput) => {
 
   const existingMember = await prisma.projectMember.findUnique({
     where: {
-      userId_projectId: { userId: data.userId, projectId },
+      userId_projectId: { userId: user.id, projectId },
     },
   });
 
@@ -156,7 +156,7 @@ export const addMember = async (projectId: string, data: AddMemberInput) => {
   }
 
   await prisma.projectMember.create({
-    data: { userId: data.userId, projectId },
+    data: { userId: user.id, projectId },
   });
 
   return user;
