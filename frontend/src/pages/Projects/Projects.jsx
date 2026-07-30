@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useLoaderData } from "react-router-dom";
+import { Form, Link, useLoaderData } from "react-router-dom";
 import { projectsQuery } from "./loader";
 
 const Projects = () => {
   const loaderData = useLoaderData();
+  const [selectedProjectToDelete, setSelectedProjectToDelete] = useState(null);
 
   // Sync React Query cache with loader data
   const { data } = useQuery({
@@ -15,7 +17,7 @@ const Projects = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Page Header with "Add New Project" Button */}
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
           <h1 className="font-page-title text-2xl font-bold text-on-surface">
@@ -75,16 +77,29 @@ const Projects = () => {
                     {project.name}
                   </Link>
 
-                  {/* Edit Project Icon Button */}
-                  <Link
-                    to={`/dashboard/editProject/${project.id}`}
-                    className="text-text-muted hover:text-primary transition-colors p-1 shrink-0"
-                    title="Edit Project"
-                  >
-                    <span className="material-symbols-outlined text-lg">
-                      edit
-                    </span>
-                  </Link>
+                  {/* Card Actions: Edit & Delete */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Link
+                      to={`/dashboard/editProject/${project.id}`}
+                      className="text-text-muted hover:text-primary transition-colors p-1"
+                      title="Edit Project"
+                    >
+                      <span className="material-symbols-outlined text-lg">
+                        edit
+                      </span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedProjectToDelete(project)}
+                      className="text-text-muted hover:text-danger hover:bg-danger/10 p-1 rounded transition-colors"
+                      title="Delete Project"
+                    >
+                      <span className="material-symbols-outlined text-lg">
+                        delete
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Description */}
@@ -96,7 +111,7 @@ const Projects = () => {
               {/* Card Footer Interactive Buttons */}
               <div className="pt-4 border-t border-border/50 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5 text-xs font-medium min-w-0 flex-wrap">
-                  {/* Clickable Members Box -> Navigates to Manage Members Page */}
+                  {/* Members Link */}
                   <Link
                     to={`/dashboard/projects/${project.id}/members`}
                     className="bg-surface-bright hover:bg-primary/10 hover:border-primary/50 text-on-surface px-2.5 py-1.5 rounded-lg border border-border/60 flex items-center gap-1 transition-all group/member whitespace-nowrap"
@@ -108,7 +123,7 @@ const Projects = () => {
                     <span>{project._count?.members ?? 0} Members</span>
                   </Link>
 
-                  {/* Clickable Tasks Box -> Opens Tasks */}
+                  {/* Tasks Link */}
                   <Link
                     to={`/dashboard/projects/${project.id}/tasks`}
                     className="bg-surface-bright hover:bg-primary/10 hover:border-primary/50 text-on-surface px-2.5 py-1.5 rounded-lg border border-border/60 flex items-center gap-1 transition-all group/task whitespace-nowrap"
@@ -121,7 +136,7 @@ const Projects = () => {
                   </Link>
                 </div>
 
-                {/* Quick Navigation Arrow */}
+                {/* Navigation Arrow */}
                 <Link
                   to={`/dashboard/projects/${project.id}/tasks`}
                   className="text-text-muted hover:text-primary transition-colors p-1 shrink-0"
@@ -134,6 +149,48 @@ const Projects = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {selectedProjectToDelete && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-surface-container border border-border rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <h3 className="font-section-heading text-lg font-bold text-on-surface">
+              Delete Project
+            </h3>
+            <p className="text-sm text-text-muted">
+              Are you sure you want to delete{" "}
+              <strong className="text-on-surface font-semibold">
+                "{selectedProjectToDelete.name}"
+              </strong>
+              ? This action cannot be undone and will delete all associated
+              tasks.
+            </p>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
+              <button
+                type="button"
+                onClick={() => setSelectedProjectToDelete(null)}
+                className="px-4 py-2 border border-border text-on-surface hover:bg-surface-bright rounded-lg text-sm transition-colors"
+              >
+                Cancel
+              </button>
+
+              <Form
+                method="post"
+                action={`/dashboard/projects/${selectedProjectToDelete.id}/delete`}
+                onSubmit={() => setSelectedProjectToDelete(null)}
+              >
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-danger text-white hover:bg-danger/90 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
+                  Execute_Delete
+                </button>
+              </Form>
+            </div>
+          </div>
         </div>
       )}
     </div>

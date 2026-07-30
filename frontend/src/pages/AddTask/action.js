@@ -12,8 +12,9 @@ export const addTaskAction =
     try {
       await customFetch.post(`/tasks/${projectId}`, data);
 
-      // Invalidate project tasks cache
+      // Invalidate project tasks cache and projects list cache
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
 
       toast.success("Task created successfully");
       return redirect(`/dashboard/projects/${projectId}/tasks`);

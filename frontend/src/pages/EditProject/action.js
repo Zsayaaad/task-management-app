@@ -13,6 +13,7 @@ export const editProjectAction =
 
       // Invalidate project caches in React Query
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project", params.id] });
 
       toast.success("Project edited successfully");
       return redirect("/dashboard");
