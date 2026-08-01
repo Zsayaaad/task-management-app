@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   createBrowserRouter,
   Navigate,
+  Outlet,
   RouterProvider,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -40,6 +41,7 @@ import { editTaskLoader } from "./pages/EditTask/loader";
 import { editTaskAction } from "./pages/EditTask/action";
 import { deleteTaskAction } from "./pages/ProjectTasks/actions";
 import { profileLoader } from "./pages/Profile/loader";
+import Error from "./pages/Error";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -53,83 +55,90 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/register" replace />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-    action: registerAction,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-    action: loginAction(queryClient),
-  },
-  {
-    path: "dashboard",
-    element: <DashboardLayout queryClient={queryClient} />,
-    loader: dashboardLoader(queryClient),
-    HydrateFallback: Loading,
+    element: <Outlet />,
+    errorElement: <Error />,
     children: [
       {
         index: true,
-        element: <Projects />,
-        loader: projectsLoader(queryClient),
+        element: <Navigate to="/register" replace />,
       },
       {
-        path: "projects/:projectId/tasks",
-        element: <ProjectTasks />,
-        loader: projectTasksLoader(queryClient),
+        path: "register",
+        element: <Register />,
+        action: registerAction,
       },
       {
-        path: "add-project",
-        element: <AddProject />,
-        action: addProjectAction(queryClient),
+        path: "login",
+        element: <Login />,
+        action: loginAction(queryClient),
       },
       {
-        path: "editProject/:id",
-        element: <EditProject />,
-        loader: editProjectLoader(queryClient),
-        action: editProjectAction(queryClient),
-      },
-      {
-        path: "projects/:projectId/add-task",
-        element: <AddTask />,
-        loader: addTaskLoader(queryClient),
-        action: addTaskAction(queryClient),
-      },
-      {
-        path: "projects/:projectId/add-member",
-        element: <AddMember />,
-        action: addMemberAction(queryClient),
-      },
-      {
-        path: "projects/:projectId/members",
-        element: <ProjectMembers />,
-        loader: projectMembersLoader(queryClient),
-      },
-      {
-        path: "projects/:projectId/members/:memberId/delete",
-        action: deleteMemberAction(queryClient),
-      },
-      {
-        path: "projects/:projectId/delete",
-        action: deleteProjectAction(queryClient),
-      },
-      {
-        path: "projects/:projectId/tasks/:taskId/edit",
-        element: <EditTask />,
-        loader: editTaskLoader(queryClient),
-        action: editTaskAction(queryClient),
-      },
-      {
-        path: "projects/:projectId/tasks/:taskId/delete",
-        action: deleteTaskAction(queryClient),
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-        loader: profileLoader(queryClient),
+        path: "dashboard",
+        element: <DashboardLayout queryClient={queryClient} />,
+        loader: dashboardLoader(queryClient),
+        HydrateFallback: Loading,
+        children: [
+          {
+            index: true,
+            element: <Projects />,
+            loader: projectsLoader(queryClient),
+          },
+          {
+            path: "projects/:projectId/tasks",
+            element: <ProjectTasks />,
+            loader: projectTasksLoader(queryClient),
+          },
+          {
+            path: "add-project",
+            element: <AddProject />,
+            action: addProjectAction(queryClient),
+          },
+          {
+            path: "editProject/:id",
+            element: <EditProject />,
+            loader: editProjectLoader(queryClient),
+            action: editProjectAction(queryClient),
+          },
+          {
+            path: "projects/:projectId/add-task",
+            element: <AddTask />,
+            loader: addTaskLoader(queryClient),
+            action: addTaskAction(queryClient),
+          },
+          {
+            path: "projects/:projectId/add-member",
+            element: <AddMember />,
+            action: addMemberAction(queryClient),
+          },
+          {
+            path: "projects/:projectId/members",
+            element: <ProjectMembers />,
+            loader: projectMembersLoader(queryClient),
+          },
+          {
+            path: "projects/:projectId/members/:memberId/delete",
+            action: deleteMemberAction(queryClient),
+          },
+          {
+            path: "projects/:projectId/delete",
+            action: deleteProjectAction(queryClient),
+          },
+          {
+            path: "projects/:projectId/tasks/:taskId/edit",
+            element: <EditTask />,
+            loader: editTaskLoader(queryClient),
+            action: editTaskAction(queryClient),
+          },
+          {
+            path: "projects/:projectId/tasks/:taskId/delete",
+            action: deleteTaskAction(queryClient),
+          },
+          {
+            path: "profile",
+            element: <Profile />,
+            loader: profileLoader(queryClient),
+          },
+        ],
       },
     ],
   },
