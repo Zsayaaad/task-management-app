@@ -1,7 +1,6 @@
-import { Form, Link, useActionData, useNavigation } from "react-router-dom";
+import { Form, Link, useNavigation } from "react-router-dom";
 
 const AddMember = () => {
-  const actionData = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -38,17 +37,9 @@ const AddMember = () => {
               id="email"
               name="email"
               placeholder="member@example.com"
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                actionData?.errors?.email
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors 
+                border-border focus:border-primary `}
             />
-            {actionData?.errors?.email && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.email}
-              </p>
-            )}
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-border/50">

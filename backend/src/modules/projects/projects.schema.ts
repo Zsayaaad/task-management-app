@@ -4,6 +4,7 @@ export const createProjectSchema = z.object({
   name: z
     .string()
     .min(1, "Project name is required")
+    .min(3, "Project name must be at least 3 character")
     .max(100, "Project name cannot exceed 100 characters"),
 
   description: z
@@ -12,19 +13,19 @@ export const createProjectSchema = z.object({
     .trim(),
 });
 
-export const updateProjectSchema = z
-  .object({
-    name: z
-      .string()
-      .min(1, "Project name cannot be empty")
-      .max(100, "display name cannot exceed 10 characters")
-      .optional(),
-    description: z.string().optional(),
-  })
-  .refine((data) => data.name !== undefined || data.description !== undefined, {
-    message:
-      "At least one field (name or description) must be provided for update",
-  });
+export const updateProjectSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Project name cannot be empty")
+    .min(3, "Project name must be at least 3 character")
+    .max(100, "display name cannot exceed 10 characters")
+    .optional(),
+  description: z.string().optional(),
+});
+// .refine((data) => data.name !== undefined || data.description !== undefined, {
+//   message:
+//     "At least one field (name or description) must be provided for update",
+// });
 
 export const addMemberSchema = z.object({
   email: z.email({

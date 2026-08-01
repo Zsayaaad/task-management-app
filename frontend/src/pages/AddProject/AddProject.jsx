@@ -1,7 +1,6 @@
-import { Form, Link, useActionData, useNavigation } from "react-router-dom";
+import { Form, Link, useNavigation } from "react-router-dom";
 
 const AddProject = () => {
-  const actionData = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -25,13 +24,6 @@ const AddProject = () => {
 
       {/* Form Container */}
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
-        {/* API Error Alert */}
-        {actionData?.msg && (
-          <div className="mb-4 p-3 bg-danger/15 border border-danger/30 rounded-lg text-danger text-sm">
-            {actionData.msg}
-          </div>
-        )}
-
         <Form method="post" className="space-y-5" noValidate>
           {/* Project Name */}
           <div>
@@ -46,18 +38,8 @@ const AddProject = () => {
               id="name"
               name="name"
               placeholder="e.g. Delivery Application"
-              defaultValue={actionData?.fields?.name || ""}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                actionData?.errors?.name
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
             />
-            {actionData?.errors?.name && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.name}
-              </p>
-            )}
           </div>
 
           {/* Project Description */}
@@ -73,18 +55,8 @@ const AddProject = () => {
               name="description"
               rows={4}
               placeholder="Sample project created by seed script..."
-              defaultValue={actionData?.fields?.description || ""}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none ${
-                actionData?.errors?.description
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none border-border focus:border-primary`}
             />
-            {actionData?.errors?.description && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.description}
-              </p>
-            )}
           </div>
 
           {/* Form Controls */}

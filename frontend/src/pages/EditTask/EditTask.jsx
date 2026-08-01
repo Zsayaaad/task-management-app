@@ -1,7 +1,6 @@
 import {
   Form,
   Link,
-  useActionData,
   useLoaderData,
   useNavigation,
   useParams,
@@ -13,7 +12,6 @@ import { TASK_STATUS, TASK_PRIORITY } from "../../utils/constants";
 const EditTask = () => {
   const { projectId, taskId } = useParams();
   const loaderData = useLoaderData();
-  const actionData = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -23,7 +21,9 @@ const EditTask = () => {
     initialData: loaderData,
   });
 
-  const task = taskData?.task || taskData || {};
+  const { task } = taskData;
+
+  // const task = taskData?.task || taskData || {};
 
   // Fetch Members Data
   const { data: membersData } = useQuery({
@@ -61,11 +61,11 @@ const EditTask = () => {
       {/* Form Container */}
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
         {/* API Error Alert */}
-        {actionData?.msg && (
+        {/* {actionData?.msg && (
           <div className="mb-4 p-3 bg-danger/15 border border-danger/30 rounded-lg text-danger text-sm">
             {actionData.msg}
           </div>
-        )}
+        )} */}
 
         <Form method="post" className="space-y-5" noValidate>
           {/* Task Title */}
@@ -81,18 +81,9 @@ const EditTask = () => {
               id="title"
               name="title"
               placeholder="e.g. Build Task Module"
-              defaultValue={actionData?.fields?.title ?? task?.title ?? ""}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                actionData?.errors?.title
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              defaultValue={task.title}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
             />
-            {actionData?.errors?.title && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.title}
-              </p>
-            )}
           </div>
 
           {/* Task Description */}
@@ -108,20 +99,9 @@ const EditTask = () => {
               name="description"
               rows={3}
               placeholder="Describe the task requirements..."
-              defaultValue={
-                actionData?.fields?.description ?? task?.description ?? ""
-              }
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none ${
-                actionData?.errors?.description
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              defaultValue={task.description}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none border-border focus:border-primary1 `}
             />
-            {actionData?.errors?.description && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.description}
-              </p>
-            )}
           </div>
 
           {/* Grid Row 1: Status & Priority */}
@@ -137,9 +117,7 @@ const EditTask = () => {
               <select
                 id="status"
                 name="status"
-                defaultValue={
-                  actionData?.fields?.status ?? task?.status ?? TASK_STATUS.TODO
-                }
+                defaultValue={task.status ?? TASK_STATUS.TODO}
                 className="w-full px-3.5 py-2.5 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
               >
                 {Object.values(TASK_STATUS).map((itemValue) => (
@@ -161,11 +139,7 @@ const EditTask = () => {
               <select
                 id="priority"
                 name="priority"
-                defaultValue={
-                  actionData?.fields?.priority ??
-                  task?.priority ??
-                  TASK_PRIORITY.MEDIUM
-                }
+                defaultValue={task.priority ?? TASK_PRIORITY.MEDIUM}
                 className="w-full px-3.5 py-2.5 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
               >
                 {Object.values(TASK_PRIORITY).map((itemValue) => (
@@ -190,14 +164,8 @@ const EditTask = () => {
               <select
                 id="assigneeId"
                 name="assigneeId"
-                defaultValue={
-                  actionData?.fields?.assigneeId ?? task?.assigneeId ?? ""
-                }
-                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                  actionData?.errors?.assigneeId
-                    ? "border-danger focus:border-danger"
-                    : "border-border focus:border-primary"
-                }`}
+                defaultValue={task?.assigneeId ?? ""}
+                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
               >
                 <option value="">Select a member</option>
                 {members.map((member) => {
@@ -210,11 +178,6 @@ const EditTask = () => {
                   );
                 })}
               </select>
-              {actionData?.errors?.assigneeId && (
-                <p className="mt-1 text-xs text-danger">
-                  {actionData.errors.assigneeId}
-                </p>
-              )}
             </div>
 
             {/* Due Date Picker */}
@@ -229,18 +192,9 @@ const EditTask = () => {
                 type="date"
                 id="dueDate"
                 name="dueDate"
-                defaultValue={actionData?.fields?.dueDate ?? formattedDueDate}
-                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                  actionData?.errors?.dueDate
-                    ? "border-danger focus:border-danger"
-                    : "border-border focus:border-primary"
-                }`}
+                defaultValue={formattedDueDate}
+                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
               />
-              {actionData?.errors?.dueDate && (
-                <p className="mt-1 text-xs text-danger">
-                  {actionData.errors.dueDate}
-                </p>
-              )}
             </div>
           </div>
 

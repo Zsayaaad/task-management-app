@@ -32,14 +32,10 @@ export const editTaskAction =
       return redirect(`/dashboard/projects/${projectId}/tasks`);
     } catch (error) {
       const errorMsg =
+        error?.response?.data?.errors.title[0] ||
         error?.response?.data?.message ||
-        error?.response?.data?.msg ||
         "Failed to update task";
       toast.error(errorMsg);
-      return {
-        msg: errorMsg,
-        errors: error?.response?.data?.errors,
-        fields: data,
-      };
+      return { error };
     }
   };

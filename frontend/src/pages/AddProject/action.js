@@ -16,7 +16,7 @@ export const addProjectAction =
       toast.success("Project added Successfully");
       return redirect("/dashboard");
     } catch (error) {
-      toast.error(error?.response?.data?.msg);
+      toast.error(error.response.data.errors.name[0]);
       return error;
     }
   };

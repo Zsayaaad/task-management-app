@@ -1,7 +1,6 @@
 import {
   Form,
   Link,
-  useActionData,
   useLoaderData,
   useNavigation,
   useParams,
@@ -11,8 +10,9 @@ import { singleProjectQuery } from "./loader";
 
 const EditProject = () => {
   const { id } = useParams();
+
   const loaderData = useLoaderData();
-  const actionData = useActionData();
+  // const actionData = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -21,12 +21,7 @@ const EditProject = () => {
     initialData: loaderData,
   });
 
-  const project = data?.project || {};
-
-  // If validation failed, retain user's edited input, otherwise use loaded DB data
-  const defaultName = actionData?.fields?.name ?? project.name ?? "";
-  const defaultDescription =
-    actionData?.fields?.description ?? project.description ?? "";
+  const { project } = data;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -48,13 +43,6 @@ const EditProject = () => {
 
       {/* Form Container */}
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
-        {/* API Error Alert */}
-        {actionData?.msg && (
-          <div className="mb-4 p-3 bg-danger/15 border border-danger/30 rounded-lg text-danger text-sm">
-            {actionData.msg}
-          </div>
-        )}
-
         <Form method="post" className="space-y-5" noValidate>
           {/* Project Name */}
           <div>
@@ -68,19 +56,9 @@ const EditProject = () => {
               type="text"
               id="name"
               name="name"
-              key={`name-${defaultName}`}
-              defaultValue={defaultName}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                actionData?.errors?.name
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              defaultValue={project.name}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
             />
-            {actionData?.errors?.name && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.name}
-              </p>
-            )}
           </div>
 
           {/* Project Description */}
@@ -95,19 +73,9 @@ const EditProject = () => {
               id="description"
               name="description"
               rows={4}
-              key={`desc-${defaultDescription}`}
-              defaultValue={defaultDescription}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none ${
-                actionData?.errors?.description
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              defaultValue={project.description}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none border-border focus:border-primary`}
             />
-            {actionData?.errors?.description && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.description}
-              </p>
-            )}
           </div>
 
           {/* Form Controls */}

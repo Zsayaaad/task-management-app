@@ -18,7 +18,10 @@ export const editProjectAction =
       toast.success("Project edited successfully");
       return redirect("/dashboard");
     } catch (error) {
-      toast.error(error?.response?.data?.msg);
+      console.log();
+
+      toast.error(error?.response?.data?.errors.name[0]);
+      // toast.error(error?.response?.data?.msg);
       return error;
     }
   };

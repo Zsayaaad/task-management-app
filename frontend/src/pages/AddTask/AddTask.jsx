@@ -1,7 +1,6 @@
 import {
   Form,
   Link,
-  useActionData,
   useLoaderData,
   useNavigation,
   useParams,
@@ -13,7 +12,6 @@ import { TASK_STATUS, TASK_PRIORITY } from "../../utils/constants";
 const AddTask = () => {
   const { projectId } = useParams();
   const loaderData = useLoaderData();
-  const actionData = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -47,11 +45,11 @@ const AddTask = () => {
       {/* Form Container */}
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
         {/* API Error Alert */}
-        {actionData?.msg && (
+        {/* {actionData?.msg && (
           <div className="mb-4 p-3 bg-danger/15 border border-danger/30 rounded-lg text-danger text-sm">
             {actionData.msg}
           </div>
-        )}
+        )} */}
 
         <Form method="post" className="space-y-5" noValidate>
           {/* Task Title */}
@@ -67,18 +65,8 @@ const AddTask = () => {
               id="title"
               name="title"
               placeholder="e.g. Build Task Module"
-              defaultValue={actionData?.fields?.title || ""}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                actionData?.errors?.title
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
             />
-            {actionData?.errors?.title && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.title}
-              </p>
-            )}
           </div>
 
           {/* Task Description */}
@@ -94,18 +82,8 @@ const AddTask = () => {
               name="description"
               rows={3}
               placeholder="Describe the task requirements..."
-              defaultValue={actionData?.fields?.description || ""}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none ${
-                actionData?.errors?.description
-                  ? "border-danger focus:border-danger"
-                  : "border-border focus:border-primary"
-              }`}
+              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none border-border focus:border-primary`}
             />
-            {actionData?.errors?.description && (
-              <p className="mt-1 text-xs text-danger">
-                {actionData.errors.description}
-              </p>
-            )}
           </div>
 
           {/* Grid Row 1: Status & Priority */}
@@ -121,7 +99,6 @@ const AddTask = () => {
               <select
                 id="status"
                 name="status"
-                defaultValue={actionData?.fields?.status || TASK_STATUS.TODO}
                 className="w-full px-3.5 py-2.5 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
               >
                 {Object.values(TASK_STATUS).map((itemValue) => {
@@ -145,7 +122,7 @@ const AddTask = () => {
               <select
                 id="priority"
                 name="priority"
-                defaultValue={actionData?.fields?.priority || TASK_PRIORITY.MEDIUM}
+                defaultValue={TASK_PRIORITY.MEDIUM}
                 className="w-full px-3.5 py-2.5 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
               >
                 {Object.values(TASK_PRIORITY).map((itemValue) => {
@@ -172,12 +149,7 @@ const AddTask = () => {
               <select
                 id="assigneeId"
                 name="assigneeId"
-                defaultValue={actionData?.fields?.assigneeId || ""}
-                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                  actionData?.errors?.assigneeId
-                    ? "border-danger focus:border-danger"
-                    : "border-border focus:border-primary"
-                }`}
+                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
               >
                 <option value="">Select a member</option>
                 {members.map((member) => {
@@ -190,11 +162,6 @@ const AddTask = () => {
                   );
                 })}
               </select>
-              {actionData?.errors?.assigneeId && (
-                <p className="mt-1 text-xs text-danger">
-                  {actionData.errors.assigneeId}
-                </p>
-              )}
             </div>
 
             {/* Due Date Picker */}
@@ -209,18 +176,8 @@ const AddTask = () => {
                 type="date"
                 id="dueDate"
                 name="dueDate"
-                defaultValue={actionData?.fields?.dueDate || ""}
-                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors ${
-                  actionData?.errors?.dueDate
-                    ? "border-danger focus:border-danger"
-                    : "border-border focus:border-primary"
-                }`}
+                className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
               />
-              {actionData?.errors?.dueDate && (
-                <p className="mt-1 text-xs text-danger">
-                  {actionData.errors.dueDate}
-                </p>
-              )}
             </div>
           </div>
 
