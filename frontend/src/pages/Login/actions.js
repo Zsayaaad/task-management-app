@@ -12,6 +12,7 @@ export const loginAction =
       await customFetch.post("/auth/login", data);
 
       // Invalidate queries so React Query re-fetches user/dashboard data
+      // If we don't pass anything in `invalidateQueries`, then we invalidate all of the queries
       queryClient.invalidateQueries();
 
       toast.success("Login successful");

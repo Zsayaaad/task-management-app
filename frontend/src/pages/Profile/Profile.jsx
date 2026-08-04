@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { currentUserQuery } from "./loader";
 
 const Profile = () => {
-  const { data } = useQuery(currentUserQuery);
-  const user = data?.user || {};
+  const { user } = useQuery(currentUserQuery).data;
+  // const user = data?.user || {};
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";

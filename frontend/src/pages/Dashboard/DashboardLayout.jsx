@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, NavLink, useNavigate, useLoaderData } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import customFetch from "../../utils/customFetch";
@@ -7,17 +7,11 @@ import { userQuery } from "./loader";
 import { DashboardContext } from "../../context/DashboardContext";
 
 const DashboardLayout = ({ queryClient }) => {
-  const loaderData = useLoaderData();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Sync with React Query cache
-  const { data } = useQuery({
-    ...userQuery,
-    initialData: loaderData,
-  });
-
-  const user = data?.user || loaderData?.user;
+  const { user } = useQuery(userQuery).data;
+  // const { user } = data;
 
   const logoutUser = async () => {
     try {

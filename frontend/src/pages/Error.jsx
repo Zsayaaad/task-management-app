@@ -8,10 +8,8 @@ const Error = () => {
 
   const queryClient = useQueryClient();
 
-  // Check if current user data exists in React Query cache (dashboard uses ["user"], profile uses ["currentUser"])
-  const userData =
-    queryClient.getQueryData(["user"]) ||
-    queryClient.getQueryData(["currentUser"]);
+  // Check if current user data exists in React Query cache
+  const userData = queryClient.getQueryData(["user"]);
   const isAuthenticated = Boolean(userData?.user || userData);
 
   // Determine redirect link based on auth status

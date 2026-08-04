@@ -19,7 +19,16 @@ export const addTaskAction =
       toast.success("Task created successfully");
       return redirect(`/dashboard/projects/${projectId}/tasks`);
     } catch (error) {
-      toast.error(error?.response?.data?.msg);
+      const errors = error?.response?.data?.errors;
+
+      if (errors && typeof errors === "object") {
+        Object.values(errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error?.response?.data?.msg || "Failed to create task");
+      }
+
       return error;
     }
   };

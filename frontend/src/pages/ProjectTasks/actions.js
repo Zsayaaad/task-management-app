@@ -20,11 +20,16 @@ export const deleteTaskAction =
 
       return redirect(`/dashboard/projects/${projectId}/tasks`);
     } catch (error) {
-      const errorMsg =
-        error?.response?.data?.message ||
-        error?.response?.data?.msg ||
-        "Failed to delete task";
-      toast.error(errorMsg);
-      return { error: errorMsg };
+      const errors = error?.response?.data?.errors;
+
+      if (errors && typeof errors === "object") {
+        Object.values(errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error?.response?.data?.msg || "Failed to delete task");
+      }
+
+      return error;
     }
   };

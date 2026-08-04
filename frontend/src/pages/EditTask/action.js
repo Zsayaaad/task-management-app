@@ -25,17 +25,21 @@ export const editTaskAction =
 
       // Invalidate project tasks & projects list cache
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["task", taskId] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
 
       toast.success(responseData?.message || "Task updated successfully");
       return redirect(`/dashboard/projects/${projectId}/tasks`);
     } catch (error) {
-      const errorMsg =
-        error?.response?.data?.errors.title[0] ||
-        error?.response?.data?.message ||
-        "Failed to update task";
-      toast.error(errorMsg);
-      return { error };
+      const errors = error?.response?.data?.errors;
+
+      if (errors && typeof errors === "object") {
+        Object.values(errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error?.response?.data?.msg || "Failed to update task");
+      }
+
+      return error;
     }
   };

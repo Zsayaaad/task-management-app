@@ -1,19 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Form, Link, useLoaderData } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
 import { projectsQuery } from "./loader";
 
 const Projects = () => {
-  const loaderData = useLoaderData();
   const [selectedProjectToDelete, setSelectedProjectToDelete] = useState(null);
 
-  // Sync React Query cache with loader data
-  const { data } = useQuery({
-    ...projectsQuery,
-    initialData: loaderData,
-  });
-
-  const projects = data?.projects || [];
+  const { projects } = useQuery(projectsQuery).data;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">

@@ -1,39 +1,15 @@
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useNavigation,
-  useParams,
-} from "react-router-dom";
+import { Form, Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { projectMembersQuery, singleTaskQuery } from "./loader";
 import { TASK_STATUS, TASK_PRIORITY } from "../../utils/constants";
+import { FormRow, SubmitBtn } from "../../components";
 
 const EditTask = () => {
   const { projectId, taskId } = useParams();
-  const loaderData = useLoaderData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
 
-  // Fetch Task Data
-  const { data: taskData } = useQuery({
-    ...singleTaskQuery(projectId, taskId),
-    initialData: loaderData,
-  });
+  const { task } = useQuery(singleTaskQuery(projectId, taskId)).data;
 
-  const { task } = taskData;
-
-  // const task = taskData?.task || taskData || {};
-
-  // Fetch Members Data
-  const { data: membersData } = useQuery({
-    ...projectMembersQuery(projectId),
-    initialData: loaderData,
-  });
-
-  const members = Array.isArray(membersData)
-    ? membersData
-    : membersData?.members || [];
+  const { members } = useQuery(projectMembersQuery(projectId)).data;
 
   // Format YYYY-MM-DD from ISO string for <input type="date" />
   const formattedDueDate = task?.dueDate
@@ -60,31 +36,14 @@ const EditTask = () => {
 
       {/* Form Container */}
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
-        {/* API Error Alert */}
-        {/* {actionData?.msg && (
-          <div className="mb-4 p-3 bg-danger/15 border border-danger/30 rounded-lg text-danger text-sm">
-            {actionData.msg}
-          </div>
-        )} */}
-
         <Form method="post" className="space-y-5" noValidate>
           {/* Task Title */}
-          <div>
-            <label
-              htmlFor="title"
-              className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2"
-            >
-              Task Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="e.g. Build Task Module"
-              defaultValue={task.title}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
-            />
-          </div>
+          <FormRow
+            labelText={"Task Title"}
+            name={"title"}
+            type={"text"}
+            placeholder={"e.g. Build Task Module"}
+          />
 
           {/* Task Description */}
           <div>
@@ -206,13 +165,13 @@ const EditTask = () => {
             >
               Cancel
             </Link>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
-            >
-              {isSubmitting ? "Updating..." : "Update Task"}
-            </button>
+
+            <SubmitBtn
+              text={"Update Task"}
+              className={
+                "px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+              }
+            />
           </div>
         </Form>
       </div>

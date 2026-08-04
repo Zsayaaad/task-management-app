@@ -1,15 +1,15 @@
 import { useNavigation } from "react-router-dom";
 
-const SubmitBtn = ({ text, submittingText }) => {
+const SubmitBtn = ({ text, className, submittingText }) => {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
+  const defaultClasses =
+    "w-full mt-2 py-3 px-4 rounded-lg bg-primary hover:opacity-90 font-button text-on-primary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+  const combinedClassName = className ? className : defaultClasses;
+
   return (
-    <button
-      type="submit"
-      disabled={isSubmitting}
-      className="w-full mt-2 py-3 px-4 rounded-lg bg-primary hover:opacity-90 font-button text-on-primary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-    >
+    <button type="submit" disabled={isSubmitting} className={combinedClassName}>
       {isSubmitting ? (
         <span className="flex items-center gap-2">
           <svg

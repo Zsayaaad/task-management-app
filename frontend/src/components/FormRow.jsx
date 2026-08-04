@@ -5,7 +5,7 @@ const FormRow = ({ name, type, labelText, placeholder }) => {
         htmlFor={name}
         className="block font-body text-sm font-medium text-on-surface"
       >
-        {labelText || name}
+        {labelText || name} <span className="text-danger">*</span>
       </label>
       <input
         type={type}

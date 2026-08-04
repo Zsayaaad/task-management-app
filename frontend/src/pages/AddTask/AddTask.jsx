@@ -1,28 +1,14 @@
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useNavigation,
-  useParams,
-} from "react-router-dom";
+import { Form, Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { projectMembersQuery } from "./loader";
 import { TASK_STATUS, TASK_PRIORITY } from "../../utils/constants";
+import FormRow from "../../components/FormRow";
+import SubmitBtn from "../../components/SubmitBtn";
 
 const AddTask = () => {
   const { projectId } = useParams();
-  const loaderData = useLoaderData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
 
-  const { data: membersData } = useQuery({
-    ...projectMembersQuery(projectId),
-    initialData: loaderData,
-  });
-
-  const members = Array.isArray(membersData)
-    ? membersData
-    : membersData?.members || [];
+  const { members } = useQuery(projectMembersQuery(projectId)).data;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -44,30 +30,14 @@ const AddTask = () => {
 
       {/* Form Container */}
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
-        {/* API Error Alert */}
-        {/* {actionData?.msg && (
-          <div className="mb-4 p-3 bg-danger/15 border border-danger/30 rounded-lg text-danger text-sm">
-            {actionData.msg}
-          </div>
-        )} */}
-
-        <Form method="post" className="space-y-5" noValidate>
+        <Form method="post" className="space-y-5">
           {/* Task Title */}
-          <div>
-            <label
-              htmlFor="title"
-              className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2"
-            >
-              Task Title <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="e.g. Build Task Module"
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
-            />
-          </div>
+          <FormRow
+            labelText={"Task Title"}
+            name={"title"}
+            type={"text"}
+            placeholder={"e.g. Build Task Module"}
+          />
 
           {/* Task Description */}
           <div>
@@ -81,6 +51,7 @@ const AddTask = () => {
               id="description"
               name="description"
               rows={3}
+              required
               placeholder="Describe the task requirements..."
               className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors resize-none border-border focus:border-primary`}
             />
@@ -189,13 +160,12 @@ const AddTask = () => {
             >
               Cancel
             </Link>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
-            >
-              {isSubmitting ? "Creating..." : "Create Task"}
-            </button>
+            <SubmitBtn
+              text={"Create Task"}
+              className={
+                "px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+              }
+            />
           </div>
         </Form>
       </div>

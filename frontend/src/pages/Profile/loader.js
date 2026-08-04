@@ -1,7 +1,7 @@
 import customFetch from "../../utils/customFetch";
 
 export const currentUserQuery = {
-  queryKey: ["currentUser"],
+  queryKey: ["user"],
   queryFn: async () => {
     const { data } = await customFetch.get("/users/current-user");
     return data; // Returns { user: { id, name, email, role, createdAt, updatedAt } }

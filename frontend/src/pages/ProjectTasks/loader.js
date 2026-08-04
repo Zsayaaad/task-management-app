@@ -4,6 +4,7 @@ export const projectTasksLoader =
   (queryClient) =>
   async ({ params, request }) => {
     const { projectId } = params;
+
     const searchValues = Object.fromEntries([
       ...new URL(request.url).searchParams.entries(),
     ]);

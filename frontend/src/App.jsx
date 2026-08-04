@@ -42,6 +42,7 @@ import { editTaskAction } from "./pages/EditTask/action";
 import { deleteTaskAction } from "./pages/ProjectTasks/actions";
 import { profileLoader } from "./pages/Profile/loader";
 import Error from "./pages/Error";
+import { ErrorElement } from "./components";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -87,6 +88,7 @@ const router = createBrowserRouter([
             path: "projects/:projectId/tasks",
             element: <ProjectTasks />,
             loader: projectTasksLoader(queryClient),
+            errorElement: <ErrorElement />,
           },
           {
             path: "add-project",
