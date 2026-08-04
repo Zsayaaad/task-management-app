@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import customFetch from "../../utils/customFetch";
 
 export const projectMembersQuery = (projectId) => ({
@@ -11,7 +12,11 @@ export const projectMembersQuery = (projectId) => ({
 export const projectMembersLoader =
   (queryClient) =>
   async ({ params }) => {
-    const { projectId } = params;
-    await queryClient.ensureQueryData(projectMembersQuery(projectId));
-    return { projectId };
+    try {
+      const { projectId } = params;
+      await queryClient.ensureQueryData(projectMembersQuery(projectId));
+      return { projectId };
+    } catch (error) {
+      toast.error(error.response.data.msg);
+    }
   };

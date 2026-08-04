@@ -86,7 +86,7 @@ const router = createBrowserRouter([
           },
           {
             path: "projects/:projectId/tasks",
-            element: <ProjectTasks />,
+            element: <ProjectTasks />, // TODO👁️‍🗨️👁️‍🗨️👁️‍🗨️: SHOW THE NAME OF PROJECT AND FULL DESCRIPTION
             loader: projectTasksLoader(queryClient),
             errorElement: <ErrorElement />,
           },

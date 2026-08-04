@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import { DashboardContext } from "../../context/DashboardContext";
 const DashboardLayout = ({ queryClient }) => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthError, setIsAuthError] = useState(false);
 
   const { user } = useQuery(userQuery).data;
   // const { user } = data;
@@ -23,6 +24,24 @@ const DashboardLayout = ({ queryClient }) => {
       toast.error(error?.response?.data?.msg || "Logout failed");
     }
   };
+
+  customFetch.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      if (error?.response?.status === 401) {
+        setIsAuthError(true);
+      }
+
+      return Promise.reject(error);
+    },
+  );
+
+  useEffect(() => {
+    if (!isAuthError) return;
+    logoutUser();
+  }, [isAuthError]);
 
   // Helper for user initials avatar
   const getInitials = (name = "") => {

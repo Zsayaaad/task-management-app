@@ -16,7 +16,15 @@ export const addProjectAction =
       toast.success("Project added Successfully");
       return redirect("/dashboard");
     } catch (error) {
-      toast.error(error.response.data.errors.name[0]);
+      const errors = error.response.data.errors;
+      if (errors && typeof errors === "object") {
+        Object.values(errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error.response.data.msg || "Failed to add project");
+      }
+
       return error;
     }
   };

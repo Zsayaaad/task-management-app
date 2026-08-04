@@ -11,7 +11,16 @@ export const registerAction = async ({ request }) => {
     toast.success("Registration successful");
     return redirect("/login");
   } catch (error) {
-    toast.error(error?.response?.data?.msg);
+    const errors = error?.response?.data?.errors;
+
+    if (errors && typeof errors === "object") {
+      Object.values(errors)
+        .flat()
+        .forEach((msg) => toast.error(msg));
+    } else {
+      toast.error(error?.response?.data?.msg || "Register failed");
+    }
+
     return error;
   }
 };

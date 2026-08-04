@@ -1,9 +1,7 @@
-import { Form, Link, useNavigation } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
+import { SubmitBtn } from "../../components";
 
 const AddProject = () => {
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
-
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
@@ -67,13 +65,13 @@ const AddProject = () => {
             >
               Cancel
             </Link>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
-            >
-              {isSubmitting ? "Creating..." : "Create Project"}
-            </button>
+
+            <SubmitBtn
+              text={"Create Project"}
+              className={
+                "px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+              }
+            />
           </div>
         </Form>
       </div>

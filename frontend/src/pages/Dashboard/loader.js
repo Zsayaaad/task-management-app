@@ -14,7 +14,7 @@ export const dashboardLoader = (queryClient) => async () => {
   try {
     return await queryClient.ensureQueryData(userQuery);
   } catch (error) {
-    toast.error(error?.response?.data);
+    toast.error(error?.response?.data.error);
     return error;
     // redirect("/login");
   }

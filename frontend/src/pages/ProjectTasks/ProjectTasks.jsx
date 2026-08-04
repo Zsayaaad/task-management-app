@@ -1,10 +1,10 @@
 import { useLoaderData, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { projectTasksQuery } from "./queries";
 import { ProjectTasksContext } from "../../context/ProjectTasksContext";
 import SearchFilterContainer from "../../components/SearchFilterContainer";
 import TasksContainer from "../../components/TasksContainer";
 import PaginationBtnContainer from "../../components/PaginationBtnContainer";
+import { projectTasksQuery } from "./loader";
 
 const ProjectTasks = () => {
   const { searchValues, projectId } = useLoaderData();

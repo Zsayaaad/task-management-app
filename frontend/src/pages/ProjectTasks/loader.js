@@ -1,17 +1,41 @@
-import { projectTasksQuery } from "./queries";
+import { toast } from "react-toastify";
+import customFetch from "../../utils/customFetch";
+
+export const projectTasksQuery = (projectId, params) => {
+  const { priority, status, assigneeName, page } = params;
+
+  return {
+    queryKey: [
+      "tasks",
+      assigneeName ?? "",
+      status ?? "all",
+      priority ?? "all",
+      page ?? 1,
+    ],
+    queryFn: async () => {
+      const { data } = await customFetch.get(`/tasks/${projectId}`, { params });
+
+      return data;
+    },
+  };
+};
 
 export const projectTasksLoader =
   (queryClient) =>
   async ({ params, request }) => {
-    const { projectId } = params;
+    try {
+      const { projectId } = params;
 
-    const searchValues = Object.fromEntries([
-      ...new URL(request.url).searchParams.entries(),
-    ]);
+      const searchValues = Object.fromEntries([
+        ...new URL(request.url).searchParams.entries(),
+      ]);
 
-    await queryClient.ensureQueryData(
-      projectTasksQuery(projectId, searchValues),
-    );
+      await queryClient.ensureQueryData(
+        projectTasksQuery(projectId, searchValues),
+      );
 
-    return { searchValues, projectId };
+      return { searchValues, projectId };
+    } catch (error) {
+      toast.error(error.response.data.msg);
+    }
   };

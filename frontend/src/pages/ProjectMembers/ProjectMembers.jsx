@@ -1,23 +1,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Form, Link, useLoaderData, useParams } from "react-router-dom";
+import { Form, Link, useParams } from "react-router-dom";
 import { projectMembersQuery } from "./loader";
 
 const ProjectMembers = () => {
   const { projectId } = useParams();
-  const loaderData = useLoaderData();
-
   // State to track member selected for removal modal
   const [selectedMember, setSelectedMember] = useState(null);
 
-  const { data: membersData } = useQuery({
-    ...projectMembersQuery(projectId),
-    initialData: loaderData,
-  });
-
-  const members = Array.isArray(membersData)
-    ? membersData
-    : membersData?.members || [];
+  const { members } = useQuery(projectMembersQuery(projectId)).data;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">

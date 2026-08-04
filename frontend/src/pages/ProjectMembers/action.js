@@ -22,11 +22,18 @@ export const deleteMemberAction =
 
       return redirect(`/dashboard/projects/${projectId}/members`);
     } catch (error) {
-      const errorMsg =
-        error?.response?.data?.message ||
-        error?.response?.data?.msg ||
-        "Failed to remove member";
-      toast.error(errorMsg);
+      const errors = error.response.data.errors;
+      if (errors) {
+        Object.values(errors).flat.forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error.response.data.msg || "Failed to delete member");
+      }
       return redirect(`/dashboard/projects/${projectId}/members`);
+      // const errorMsg =
+      //   error?.response?.data?.message ||
+      //   error?.response?.data?.msg ||
+      //   "Failed to remove member";
+      // toast.error(errorMsg);
+      // return redirect(`/dashboard/projects/${projectId}/members`);
     }
   };

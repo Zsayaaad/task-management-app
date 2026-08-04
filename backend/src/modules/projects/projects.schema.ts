@@ -18,9 +18,12 @@ export const updateProjectSchema = z.object({
     .string()
     .min(1, "Project name cannot be empty")
     .min(3, "Project name must be at least 3 character")
-    .max(100, "display name cannot exceed 10 characters")
+    .max(100, "Project name cannot exceed 10 characters")
     .optional(),
-  description: z.string().optional(),
+  description: z
+    .string()
+    .max(500, "Description must be at most 500 characters")
+    .optional(),
 });
 // .refine((data) => data.name !== undefined || data.description !== undefined, {
 //   message:
