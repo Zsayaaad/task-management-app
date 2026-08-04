@@ -1,27 +1,12 @@
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useNavigation,
-  useParams,
-} from "react-router-dom";
+import { Form, Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { singleProjectQuery } from "./loader";
+import { FormRow, SubmitBtn } from "../../components";
 
 const EditProject = () => {
   const { id } = useParams();
 
-  const loaderData = useLoaderData();
-  // const actionData = useActionData();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
-
-  const { data } = useQuery({
-    ...singleProjectQuery(id),
-    initialData: loaderData,
-  });
-
-  const { project } = data;
+  const { project } = useQuery(singleProjectQuery(id)).data;
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -45,21 +30,12 @@ const EditProject = () => {
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
         <Form method="post" className="space-y-5" noValidate>
           {/* Project Name */}
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2"
-            >
-              Project Name <span className="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              defaultValue={project.name}
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors border-border focus:border-primary`}
-            />
-          </div>
+          <FormRow
+            labelText={"Project Name"}
+            name={"name"}
+            type={"text"}
+            defaultValue={project.name}
+          />
 
           {/* Project Description */}
           <div>
@@ -86,13 +62,12 @@ const EditProject = () => {
             >
               Cancel
             </Link>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
-            >
-              {isSubmitting ? "Saving..." : "Save Changes"}
-            </button>
+            <SubmitBtn
+              text={"Save Changes"}
+              className={
+                "px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+              }
+            />
           </div>
         </Form>
       </div>

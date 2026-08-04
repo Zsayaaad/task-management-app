@@ -18,10 +18,16 @@ export const editProjectAction =
       toast.success("Project edited successfully");
       return redirect("/dashboard");
     } catch (error) {
-      console.log();
+      const errors = error?.response?.data?.errors;
 
-      toast.error(error?.response?.data?.errors.name[0]);
-      // toast.error(error?.response?.data?.msg);
+      if (errors && typeof errors === "object") {
+        Object.values(errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error?.response?.data?.msg || "Failed to update project");
+      }
+
       return error;
     }
   };

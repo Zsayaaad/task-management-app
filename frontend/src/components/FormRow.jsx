@@ -1,4 +1,4 @@
-const FormRow = ({ name, type, labelText, placeholder }) => {
+const FormRow = ({ name, type, labelText, placeholder, defaultValue }) => {
   return (
     <div className="space-y-1.5">
       <label
@@ -12,6 +12,7 @@ const FormRow = ({ name, type, labelText, placeholder }) => {
         id={name}
         name={name}
         required
+        defaultValue={defaultValue}
         placeholder={placeholder}
         className="input-field"
       />
