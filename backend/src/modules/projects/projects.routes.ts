@@ -6,8 +6,10 @@ import {
   updateProjectSchema,
 } from "./projects.schema.js";
 import { projectController } from "./projects.controller.js";
-import { checkProjectAccess } from "../../middlewares/checkProjectAccess.js";
-import { requireAdmin } from "../../middlewares/auth.js";
+import {
+  authorizeProjectCreator,
+  checkProjectAccess,
+} from "../../middlewares/checkProjectAccess.js";
 
 const router = Router();
 // projects.routes.ts
@@ -21,24 +23,25 @@ router.use("/:projectId", checkProjectAccess);
 router
   .route("/:projectId")
   .get(projectController.getProjectById)
-  .patch(validate(updateProjectSchema), projectController.updateProject)
-  .delete(projectController.deleteProject);
+  .patch(
+    validate(updateProjectSchema),
+    authorizeProjectCreator,
+    projectController.updateProject,
+  )
+  .delete(authorizeProjectCreator, projectController.deleteProject);
 
-router.get(
-  "/:projectId/members",
-  projectController.getProjectMembers,
-);
+router.get("/:projectId/members", projectController.getProjectMembers);
 
 router.post(
   "/:projectId/members",
-  requireAdmin,
   validate(addMemberSchema),
+  authorizeProjectCreator,
   projectController.addMember,
 );
 
 router.delete(
   "/:projectId/members/:userId",
-  requireAdmin,
+  authorizeProjectCreator,
   projectController.removeMember,
 );
 

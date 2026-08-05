@@ -35,7 +35,48 @@ export const checkProjectAccess = async (
     const isMember = project.members.some((member) => member.userId === userId);
 
     if (role !== Role.ADMIN && !isMember) {
-      throw new UnauthorizedError("You do not have access to this project");
+      throw new UnauthorizedError("You do not have access on this operation");
+    }
+
+    req.project = project;
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const authorizeProjectCreator = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const projectId = req.params.projectId as string;
+
+    if (!req.user) {
+      throw new UnauthorizedError("User is not authenticated");
+    }
+    const { userId, role } = req.user;
+
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: {
+        id: true,
+        creatorId: true,
+      },
+    });
+
+    if (!project) {
+      throw new NotFoundError("Project not found");
+    }
+
+    const isCreator = project.creatorId === userId;
+
+    if (role !== Role.ADMIN && !isCreator) {
+      throw new UnauthorizedError(
+        "Only the project creator or admin can perform this action",
+      );
     }
 
     req.project = project;

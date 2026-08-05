@@ -31,12 +31,22 @@ export const addMemberAction =
 
       return redirect("/dashboard");
     } catch (error) {
-      const errorMsg =
-        error?.response?.data?.errors?.email[0] ||
-        error?.response?.data?.message ||
-        "Failed to add member";
+      const errors = error?.response?.data?.errors;
 
-      toast.error(errorMsg);
+      if (errors && typeof errors === "object") {
+        Object.values(errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error?.response?.data?.msg || "Failed to add member");
+      }
+
       return error;
+      // const errorMsg =
+      //   error?.response?.data?.errors?.email[0] ||
+      //   error?.response?.data?.message ||
+      //   "Failed to add member";
+
+      // toast.error(errorMsg);
     }
   };

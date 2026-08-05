@@ -1231,6 +1231,7 @@ async function main() {
       data: {
         name: projectInput.name,
         description: projectInput.description,
+        creatorId: admin.id,
       },
     });
 

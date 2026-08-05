@@ -31,6 +31,7 @@ export const createProject = async (
       data: {
         name: data.name,
         description: data.description,
+        creatorId,
       },
     });
 
@@ -44,9 +45,17 @@ export const createProject = async (
     return newProject;
   });
 
-  const projectWithMembers = await prisma.project.findUnique({
+  const projectWithDetails = await prisma.project.findUnique({
     where: { id: project.id },
     include: {
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
       members: {
         include: {
           user: {
@@ -62,13 +71,16 @@ export const createProject = async (
     },
   });
 
-  return projectWithMembers;
+  return projectWithDetails;
 };
 
 export const getAllProjects = async (userId: string, role: Role) => {
   const projects = await prisma.project.findMany({
     where: role === Role.ADMIN ? {} : { members: { some: { userId: userId } } },
     include: {
+      creator: {
+        select: { id: true, name: true, email: true, role: true },
+      },
       _count: {
         select: {
           members: true,
@@ -86,6 +98,14 @@ export const getProjectById = async (projectId: string) => {
   const product = await prisma.project.findUnique({
     where: { id: projectId },
     include: {
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
       members: {
         include: {
           user: {
