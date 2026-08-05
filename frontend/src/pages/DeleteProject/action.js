@@ -16,11 +16,12 @@ export const deleteProjectAction =
 
       return redirect("/dashboard");
     } catch (error) {
-      const errorMsg =
-        error?.response?.data?.message ||
-        error?.response?.data?.msg ||
-        "Failed to delete project";
-      toast.error(errorMsg);
+      const errors = error.response.data.errors;
+      if (errors) {
+        Object.values(errors).flat.forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(error.response.data.msg || "Failed to delete project");
+      }
       return redirect(`/dashboard`);
     }
   };

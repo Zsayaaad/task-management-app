@@ -175,26 +175,7 @@ export const updateTask = async (
     );
   }
 
-  // To find out which fields the user actually requested to be modified, or to check whether certain fields have been submitted or not
-  const requestedFields = Object.keys(data);
 
-  // If only an Assignee (not an Admin and not a Creator) -> they are only allowed to edit the status
-  if (!isAdmin && !isCreator && isAssignee) {
-    const disallowedFields = requestedFields.filter(
-      (field) => field !== "status",
-    );
-
-    if (disallowedFields.length > 0) {
-      throw new UnauthorizedError(
-        `As an assignee, you can only update the task status. Not allowed to change: ${disallowedFields.join(
-          ", ",
-        )}`,
-      );
-    }
-    if (requestedFields.length === 0) {
-      throw new BadRequestError("No valid fields provided to update");
-    }
-  }
 
   if ((isAdmin || isCreator) && data.assigneeId) {
     const isMember = await prisma.projectMember.findUnique({

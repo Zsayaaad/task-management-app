@@ -29,11 +29,5 @@ export const deleteMemberAction =
         toast.error(error.response.data.msg || "Failed to delete member");
       }
       return redirect(`/dashboard/projects/${projectId}/members`);
-      // const errorMsg =
-      //   error?.response?.data?.message ||
-      //   error?.response?.data?.msg ||
-      //   "Failed to remove member";
-      // toast.error(errorMsg);
-      // return redirect(`/dashboard/projects/${projectId}/members`);
     }
   };

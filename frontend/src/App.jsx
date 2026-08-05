@@ -109,7 +109,7 @@ const router = createBrowserRouter([
           },
           {
             path: "projects/:projectId/add-member",
-            element: <AddMember />, // START FROM
+            element: <AddMember />,
             action: addMemberAction(queryClient),
           },
           {

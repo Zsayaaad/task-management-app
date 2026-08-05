@@ -3,7 +3,8 @@ const FormRow = ({ name, type, labelText, placeholder, defaultValue }) => {
     <div className="space-y-1.5">
       <label
         htmlFor={name}
-        className="block font-body text-sm font-medium text-on-surface"
+        // className="block font-body text-sm font-medium text-on-surface"
+        className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2"
       >
         {labelText || name} <span className="text-danger">*</span>
       </label>

@@ -1,12 +1,20 @@
 import { useNavigation } from "react-router-dom";
 
-const SubmitBtn = ({ text, className, submittingText }) => {
+const SubmitBtn = ({ text, className, submittingText, icon }) => {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
   const defaultClasses =
-    "w-full mt-2 py-3 px-4 rounded-lg bg-primary hover:opacity-90 font-button text-on-primary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+    "w-full mt-2 py-3 px-4 rounded-lg bg-primary hover:opacity-90 font-button text-on-primary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5";
   const combinedClassName = className ? className : defaultClasses;
+
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (typeof icon === "string") {
+      return <span className="material-symbols-outlined text-base">{icon}</span>;
+    }
+    return icon;
+  };
 
   return (
     <button type="submit" disabled={isSubmitting} className={combinedClassName}>
@@ -35,7 +43,10 @@ const SubmitBtn = ({ text, className, submittingText }) => {
           {submittingText || "Submitting..."}
         </span>
       ) : (
-        text || "Submit"
+        <span className="flex items-center gap-1.5">
+          {renderIcon()}
+          <span>{text || "Submit"}</span>
+        </span>
       )}
     </button>
   );

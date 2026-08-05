@@ -50,10 +50,10 @@ const ProjectMembers = () => {
         ) : (
           <ul className="divide-y divide-border/60">
             {members.map((member) => {
-              const userId = member.id || member.userId;
-              const name = member.name || member.user?.name || "Team Member";
-              const email = member.email || member.user?.email || "";
-              const role = member.role || "MEMBER";
+              const userId = member.id;
+              const name = member.name;
+              const email = member.email;
+              const role = member.role;
 
               return (
                 <li

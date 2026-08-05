@@ -9,16 +9,10 @@ export const addMemberAction =
     const formData = await request.formData();
     const email = formData.get("email");
 
-    // Basic Validation
-    if (!email || !email.trim()) {
-      toast.error("Email is required");
-      return { errors: { email: "Email is required" } };
-    }
-
     try {
       const { data } = await customFetch.post(
         `/projects/${projectId}/members`,
-        { email: email.trim() },
+        { email },
       );
 
       toast.success(data?.message || "Member added successfully!");
@@ -33,6 +27,8 @@ export const addMemberAction =
     } catch (error) {
       const errors = error?.response?.data?.errors;
 
+      // console.log(error.response.data.msg);
+
       if (errors && typeof errors === "object") {
         Object.values(errors)
           .flat()
@@ -42,11 +38,5 @@ export const addMemberAction =
       }
 
       return error;
-      // const errorMsg =
-      //   error?.response?.data?.errors?.email[0] ||
-      //   error?.response?.data?.message ||
-      //   "Failed to add member";
-
-      // toast.error(errorMsg);
     }
   };

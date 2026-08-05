@@ -1,9 +1,7 @@
-import { Form, Link, useNavigation } from "react-router-dom";
+import { Form, Link } from "react-router-dom";
+import { FormRow, SubmitBtn } from "../../components";
 
 const AddMember = () => {
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
-
   return (
     <div className="max-w-md mx-auto space-y-6">
       {/* Header */}
@@ -24,23 +22,13 @@ const AddMember = () => {
 
       {/* Form Container */}
       <div className="bg-surface-container border border-border rounded-xl p-6 shadow-lg">
-        <Form method="post" className="space-y-4" noValidate>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2"
-            >
-              Member Email Address <span className="text-danger">*</span>
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="member@example.com"
-              className={`w-full px-3.5 py-2.5 bg-surface-dim border rounded-lg text-on-surface text-sm focus:outline-none transition-colors 
-                border-border focus:border-primary `}
-            />
-          </div>
+        <Form method="post" className="space-y-4">
+          <FormRow
+            type={"email"}
+            name={"email"}
+            placeholder={"member@example.com"}
+            labelText={"Member Email Address"}
+          />
 
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-border/50">
             <Link
@@ -49,16 +37,12 @@ const AddMember = () => {
             >
               Cancel
             </Link>
-            <button
-              type="submit"
-              disabled={isSubmitting}
+            <SubmitBtn
+              text="Add Member"
+              icon="person_add"
+              submittingText="Adding..."
               className="px-5 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm flex items-center gap-1.5"
-            >
-              <span className="material-symbols-outlined text-base">
-                person_add
-              </span>
-              {isSubmitting ? "Adding..." : "Add Member"}
-            </button>
+            />
           </div>
         </Form>
       </div>
