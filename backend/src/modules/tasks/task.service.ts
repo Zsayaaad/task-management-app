@@ -84,8 +84,8 @@ export const getAllTasks = async (
 
   const where: Prisma.TaskWhereInput = {
     projectId,
-    ...(status && { status: status }),
-    ...(priority && { priority: priority }),
+    status,
+    priority,
     ...(assigneeName && {
       assignee: {
         name: {
@@ -98,7 +98,7 @@ export const getAllTasks = async (
 
   const skip = (page - 1) * limit;
 
-  const [totalTasks, tasks] = await prisma.$transaction([
+  const [totalTasks, tasks] = await Promise.all([
     prisma.task.count({ where }),
     prisma.task.findMany({
       where,
@@ -115,14 +115,13 @@ export const getAllTasks = async (
       orderBy: { updatedAt: "desc" },
     }),
   ]);
-  const totalPages = Math.ceil(totalTasks / limit);
 
   return {
     tasks,
     pagination: {
       totalTasks,
       currentPage: page,
-      numOfPages: totalPages,
+      totalPages: Math.ceil(totalTasks / limit),
       limit,
     },
   };
@@ -174,8 +173,6 @@ export const updateTask = async (
       "You do not have permission to update this task",
     );
   }
-
-
 
   if ((isAdmin || isCreator) && data.assigneeId) {
     const isMember = await prisma.projectMember.findUnique({

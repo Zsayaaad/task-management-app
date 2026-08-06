@@ -1,10 +1,21 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { taskService } from "./task.service.js";
-import { GetAllTasksQueryInput } from "./task.schema.js";
+import { getAllTasksQuerySchema, taskIdParamSchema } from "./task.schema.js";
+import { NotFoundError } from "../../errors/customErrors.js";
+
+export const extractTaskId = (req: Request): string => {
+  const parsed = taskIdParamSchema.safeParse(req.params);
+
+  if (!parsed.success) {
+    throw new NotFoundError("Task ID parameter is missing or invalid");
+  }
+
+  return parsed.data.taskId;
+};
 
 export const createTask = async (req: Request, res: Response) => {
-  const projectId = req.params.projectId as string;
+  const { id: projectId } = req.project;
   const creatorId = req.user!.userId;
 
   const task = await taskService.createTask(projectId, creatorId, req.body);
@@ -16,33 +27,34 @@ export const createTask = async (req: Request, res: Response) => {
 };
 
 export const getAllTasks = async (req: Request, res: Response) => {
-  const projectId = req.params.projectId as string;
+  // const projectId = req.params.projectId ;
 
-  const result = await taskService.getAllTasks(
-    projectId,
-    req.validatedQuery as GetAllTasksQueryInput,
-  );
+  const { id: projectId } = req.project;
+
+  const query = getAllTasksQuerySchema.parse(req.query);
+
+  const result = await taskService.getAllTasks(projectId, query);
 
   return res.status(StatusCodes.OK).json(result);
 };
 
 export const getTaskById = async (req: Request, res: Response) => {
-  const { projectId, taskId } = req.params;
+  const { id: projectId } = req.project;
 
-  const task = await taskService.getTaskById(
-    projectId as string,
-    taskId as string,
-  );
+  const taskId = extractTaskId(req);
+
+  const task = await taskService.getTaskById(projectId, taskId);
 
   return res.status(StatusCodes.OK).json({ task });
 };
 
 export const updateTask = async (req: Request, res: Response) => {
-  const { projectId, taskId } = req.params;
+  const { id: projectId } = req.project;
+  const taskId = extractTaskId(req);
 
   const updatedTask = await taskService.updateTask(
-    projectId as string,
-    taskId as string,
+    projectId,
+    taskId,
     req.body,
     { userId: req.user!.userId, role: req.user!.role },
   );
@@ -54,14 +66,16 @@ export const updateTask = async (req: Request, res: Response) => {
 };
 
 export const deleteTask = async (req: Request, res: Response) => {
-  const { projectId, taskId } = req.params;
+  const { id: projectId } = req.project;
+
+  const taskId = extractTaskId(req);
+
   const { userId, role } = req.user!;
 
-  const result = await taskService.deleteTask(
-    projectId as string,
-    taskId as string,
-    { userId, role },
-  );
+  const result = await taskService.deleteTask(projectId, taskId, {
+    userId,
+    role,
+  });
 
   return res.status(StatusCodes.OK).json(result);
 };

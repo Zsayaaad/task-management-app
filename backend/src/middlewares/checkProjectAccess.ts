@@ -2,6 +2,21 @@ import { NextFunction, Request, Response } from "express";
 import { NotFoundError, UnauthorizedError } from "../errors/customErrors.js";
 import { prisma } from "../lib/prisma.js";
 import { Role } from "@prisma/client";
+import { z } from "zod";
+
+const projectIdParamSchema = z.object({
+  projectId: z.uuid("Invalid project ID format"),
+});
+
+export const extractProjectId = (req: Request): string => {
+  const parsed = projectIdParamSchema.safeParse(req.params);
+
+  if (!parsed.success) {
+    throw new NotFoundError("Project ID parameter is missing or invalid");
+  }
+
+  return parsed.data.projectId;
+};
 
 export const checkProjectAccess = async (
   req: Request,
@@ -9,11 +24,8 @@ export const checkProjectAccess = async (
   next: NextFunction,
 ) => {
   try {
-    const projectId = req.params.projectId as string;
-
-    if (!projectId || typeof projectId !== "string") {
-      throw new NotFoundError("Project ID parameter is missing or invalid");
-    }
+    // const projectId = req.params.projectId as string;
+    const projectId = extractProjectId(req);
 
     if (!req.user) {
       throw new UnauthorizedError("User is not authenticated");
@@ -52,7 +64,8 @@ export const authorizeProjectCreator = async (
   next: NextFunction,
 ) => {
   try {
-    const projectId = req.params.projectId as string;
+    // const projectId = req.params.projectId as string;
+    const projectId = extractProjectId(req);
 
     if (!req.user) {
       throw new UnauthorizedError("User is not authenticated");

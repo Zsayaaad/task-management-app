@@ -11,37 +11,28 @@ import { taskController } from "./task.controller.js";
 
 const router = Router();
 
+router.use("/:projectId", checkProjectAccess);
+
 router.post(
   "/:projectId",
-  checkProjectAccess,
   validate(createTaskBodySchema),
   taskController.createTask,
 );
 
 router.get(
   "/:projectId",
-  checkProjectAccess,
   validate(getAllTasksQuerySchema, "query"),
   taskController.getAllTasks,
 );
 
-router.get(
-  "/:projectId/:taskId",
-  checkProjectAccess,
-  taskController.getTaskById,
-);
+router.get("/:projectId/:taskId", taskController.getTaskById);
 
 router.patch(
   "/:projectId/:taskId",
-  checkProjectAccess,
   validate(updateTaskBodySchema),
   taskController.updateTask,
 );
 
-router.delete(
-  "/:projectId/:taskId",
-  checkProjectAccess,
-  taskController.deleteTask,
-);
+router.delete("/:projectId/:taskId", taskController.deleteTask);
 
 export default router;

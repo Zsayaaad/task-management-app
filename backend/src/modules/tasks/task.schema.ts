@@ -1,6 +1,10 @@
 import { TaskPriority, TaskStatus } from "@prisma/client";
 import { z } from "zod";
 
+export const taskIdParamSchema = z.object({
+  taskId: z.uuid().trim().min(1),
+});
+
 export const createTaskBodySchema = z.object({
   title: z
     .string({ error: "Title is required" })
@@ -25,22 +29,34 @@ export const createTaskBodySchema = z.object({
   assigneeId: z.uuid().min(1, "Assignee is required"),
 });
 
-// Schema for Query Params so we handle queries by using coerce: URL: page=1&limit=12, Zod convert it to number 1,12
+const ignoreAllOrEmpty = (value: unknown) =>
+  value === "all" || value === "" ? undefined : value;
+
+const ignoreBlankString = (value: unknown) =>
+  typeof value === "string" && value.trim() === "" ? undefined : value;
+
+const emptyToUndefined = (value: unknown) => (value === "" ? undefined : value);
+
 export const getAllTasksQuerySchema = z.object({
-  status: z.preprocess(
-    (val) => (val === "all" || val === "" ? undefined : val),
-    z.enum(TaskStatus).optional(),
-  ),
-  priority: z.preprocess(
-    (val) => (val === "all" || val === "" ? undefined : val),
-    z.enum(TaskPriority).optional(),
-  ),
+  // z.preprocess is used to prepare the input before validation.
+  status: z.preprocess(ignoreAllOrEmpty, z.enum(TaskStatus).optional()),
+
+  priority: z.preprocess(ignoreAllOrEmpty, z.enum(TaskPriority).optional()),
+
   assigneeName: z.preprocess(
-    (val) => (typeof val === "string" && val.trim() === "" ? undefined : val),
-    z.string().min(1).optional(),
+    ignoreBlankString,
+    z.string().trim().min(1).optional(),
   ),
-  page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().positive().max(100).optional().default(10),
+
+  page: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().int().positive().default(1),
+  ),
+
+  limit: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().int().positive().max(100).default(10),
+  ),
 });
 
 export const updateTaskBodySchema = z.object({
