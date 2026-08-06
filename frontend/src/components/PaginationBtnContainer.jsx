@@ -4,7 +4,7 @@ import { useProjectTasksContext } from "../context/ProjectTasksContext";
 const PaginationBtnContainer = () => {
   const { data } = useProjectTasksContext();
   const { pagination } = data;
-  const { currentPage, numOfPages } = pagination;
+  const { currentPage, totalPages } = pagination;
 
   const { search, pathname } = useLocation();
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const PaginationBtnContainer = () => {
       <p className="text-xs text-text-muted">
         Page{" "}
         <span className="text-on-surface font-semibold">{currentPage}</span> of{" "}
-        <span className="text-on-surface font-semibold">{numOfPages}</span>
+        <span className="text-on-surface font-semibold">{totalPages}</span>
       </p>
 
       <div className="flex gap-2">
@@ -35,7 +35,7 @@ const PaginationBtnContainer = () => {
           Previous
         </button>
         <button
-          disabled={currentPage === numOfPages}
+          disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
           className="px-3 py-1.5 rounded-lg border border-border text-on-surface hover:bg-surface-bright disabled:opacity-40 font-button text-xs transition-colors flex items-center gap-1"
         >

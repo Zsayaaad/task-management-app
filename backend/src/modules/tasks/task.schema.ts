@@ -43,10 +43,7 @@ export const getAllTasksQuerySchema = z.object({
 
   priority: z.preprocess(ignoreAllOrEmpty, z.enum(TaskPriority).optional()),
 
-  assigneeName: z.preprocess(
-    ignoreBlankString,
-    z.string().trim().min(1).optional(),
-  ),
+  search: z.preprocess(ignoreBlankString, z.string().trim().min(1).optional()),
 
   page: z.preprocess(
     emptyToUndefined,

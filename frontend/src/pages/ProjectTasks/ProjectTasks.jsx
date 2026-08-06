@@ -11,7 +11,7 @@ const ProjectTasks = () => {
   const { data } = useQuery(projectTasksQuery(projectId, searchValues));
 
   const totalTasks = data?.pagination?.totalTasks || 0;
-  const numOfPages = data?.pagination?.numOfPages || 1;
+  const totalPages = data?.pagination?.totalPages || 1;
 
   return (
     <ProjectTasksContext.Provider value={{ data, searchValues, projectId }}>
@@ -57,7 +57,7 @@ const ProjectTasks = () => {
         <TasksContainer />
 
         {/* Pagination */}
-        {numOfPages > 1 && <PaginationBtnContainer />}
+        {totalPages > 1 && <PaginationBtnContainer />}
       </main>
     </ProjectTasksContext.Provider>
   );

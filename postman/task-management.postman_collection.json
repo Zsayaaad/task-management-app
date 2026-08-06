@@ -469,7 +469,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/tasks/fa5e2d69-29ba-421c-83db-f0f6156f482f?page=1&limit=10&assigneeName=two",
+              "raw": "{{base_url}}/tasks/fa5e2d69-29ba-421c-83db-f0f6156f482f?page=1&limit=10&search=two",
               "host": ["{{base_url}}"],
               "path": ["tasks", "fa5e2d69-29ba-421c-83db-f0f6156f482f"],
               "query": [
@@ -482,7 +482,7 @@
                   "value": "10"
                 },
                 {
-                  "key": "assigneeName",
+                  "key": "search",
                   "value": "two"
                 },
                 {

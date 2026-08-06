@@ -80,19 +80,17 @@ export const getAllTasks = async (
   projectId: string,
   query: GetAllTasksQueryInput,
 ) => {
-  const { status, priority, assigneeName, page, limit } = query;
+  const { status, priority, search, page, limit } = query;
 
   const where: Prisma.TaskWhereInput = {
     projectId,
     status,
     priority,
-    ...(assigneeName && {
-      assignee: {
-        name: {
-          contains: assigneeName,
-          mode: "insensitive",
-        },
-      },
+    ...(search && {
+      OR: [
+        { title: { contains: search, mode: "insensitive" } },
+        { assignee: { name: { contains: search, mode: "insensitive" } } },
+      ],
     }),
   };
 

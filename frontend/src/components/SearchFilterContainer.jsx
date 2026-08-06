@@ -2,10 +2,10 @@ import { Form, Link, useSubmit } from "react-router-dom";
 import { useProjectTasksContext } from "../context/ProjectTasksContext";
 import { TASK_STATUS, TASK_PRIORITY } from "../utils/constants";
 
-
 const SearchFilterContainer = () => {
   const { searchValues, projectId } = useProjectTasksContext();
-  const { priority, status, assigneeName } = searchValues;
+  const { priority, status, search } = searchValues;
+
   const submit = useSubmit();
 
   const debounce = (onChange) => {
@@ -26,7 +26,7 @@ const SearchFilterContainer = () => {
           {/* Assignee Search */}
           <div>
             <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-1.5">
-              Assignee Name
+              Search by title & assignee name
             </label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-lg">
@@ -34,9 +34,9 @@ const SearchFilterContainer = () => {
               </span>
               <input
                 type="search"
-                name="assigneeName"
-                placeholder="Search assignee..."
-                defaultValue={assigneeName}
+                name="search"
+                placeholder="e.g. Sara Smith | UI Task"
+                defaultValue={search}
                 onChange={debounce((form) => submit(form))}
                 className="w-full pl-9 pr-3 py-2 bg-surface-dim border border-border rounded-lg text-on-surface text-sm focus:outline-none focus:border-primary transition-colors"
               />

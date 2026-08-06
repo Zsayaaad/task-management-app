@@ -2,12 +2,12 @@ import { toast } from "react-toastify";
 import customFetch from "../../utils/customFetch";
 
 export const projectTasksQuery = (projectId, params) => {
-  const { priority, status, assigneeName, page } = params;
+  const { priority, status, search, page } = params;
 
   return {
     queryKey: [
       "tasks",
-      assigneeName ?? "",
+      search ?? "",
       status ?? "all",
       priority ?? "all",
       page ?? 1,
