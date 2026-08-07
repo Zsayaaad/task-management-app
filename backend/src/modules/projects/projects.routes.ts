@@ -3,6 +3,7 @@ import { validate } from "../../middlewares/validate.js";
 import {
   addMemberSchema,
   createProjectSchema,
+  getAllProjectsQuerySchema,
   updateProjectSchema,
 } from "./projects.schema.js";
 import { projectController } from "./projects.controller.js";
@@ -16,7 +17,10 @@ const router = Router();
 router
   .route("/")
   .post(validate(createProjectSchema), projectController.createProject)
-  .get(projectController.getAllProjects);
+  .get(
+    validate(getAllProjectsQuerySchema, "query"),
+    projectController.getAllProjects,
+  );
 
 router.use("/:projectId", checkProjectAccess);
 

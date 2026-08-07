@@ -83,6 +83,7 @@ const router = createBrowserRouter([
             index: true,
             element: <Projects />,
             loader: projectsLoader(queryClient),
+            errorElement: <ErrorElement />,
           },
           {
             path: "projects/:projectId/tasks",

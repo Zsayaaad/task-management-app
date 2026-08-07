@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import {
   BadRequestError,
   ConflictError,
@@ -8,6 +8,7 @@ import { prisma } from "../../lib/prisma.js";
 import {
   AddMemberInput,
   CreateProjectInput,
+  GetAllProjectsQueryInput,
   UpdateProjectInput,
 } from "./projects.schema.js";
 
@@ -74,24 +75,76 @@ export const createProject = async (
   return projectWithDetails;
 };
 
-export const getAllProjects = async (userId: string, role: Role) => {
-  const projects = await prisma.project.findMany({
-    where: role === Role.ADMIN ? {} : { members: { some: { userId: userId } } },
-    include: {
-      creator: {
-        select: { id: true, name: true, email: true, role: true },
-      },
-      _count: {
-        select: {
-          members: true,
-          tasks: true,
+export const getAllProjects = async (
+  userId: string,
+  role: Role,
+  query: GetAllProjectsQueryInput,
+) => {
+  const { search, limit, page, sort } = query;
+  const skip = (page - 1) * limit;
+
+  const where: Prisma.ProjectWhereInput = {
+    ...(role !== Role.ADMIN && { members: { some: { userId: userId } } }),
+    ...(search && { name: { contains: search, mode: "insensitive" } }),
+  };
+
+  const sortOptions: Record<string, Prisma.ProjectOrderByWithRelationInput> = {
+    "a-z": { name: "asc" },
+    "z-a": { name: "desc" },
+    newest: { createdAt: "desc" },
+    oldest: { createdAt: "asc" },
+  };
+
+  const orderBy = sortOptions[sort] || { createdAt: "desc" };
+
+  const [totalProjects, projects] = await Promise.all([
+    prisma.project.count({ where }),
+    prisma.project.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy,
+      include: {
+        creator: {
+          select: { id: true, name: true, email: true, role: true },
+        },
+        _count: {
+          select: {
+            members: true,
+            tasks: true,
+          },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+    }),
+  ]);
 
-  return projects;
+  return {
+    projects,
+    pagination: {
+      totalProjects,
+      currentPage: page,
+      totalPages: Math.ceil(totalProjects / limit),
+      limit,
+    },
+  };
+
+  // const projects = await prisma.project.findMany({
+  //   where: role === Role.ADMIN ? {} : { members: { some: { userId: userId } } },
+  //   include: {
+  //     creator: {
+  //       select: { id: true, name: true, email: true, role: true },
+  //     },
+  //     _count: {
+  //       select: {
+  //         members: true,
+  //         tasks: true,
+  //       },
+  //     },
+  //   },
+  //   orderBy: { createdAt: "desc" },
+  // });
+
+  // return projects;
 };
 
 export const getProjectById = async (projectId: string) => {

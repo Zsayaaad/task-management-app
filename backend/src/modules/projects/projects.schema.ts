@@ -36,6 +36,30 @@ export const addMemberSchema = z.object({
   }),
 });
 
+const ignoreBlankString = (value: unknown) =>
+  typeof value === "string" && value.trim() === "" ? undefined : value;
+
+const emptyToUndefined = (value: unknown) => (value === "" ? undefined : value);
+
+export const getAllProjectsQuerySchema = z.object({
+  search: z.preprocess(ignoreBlankString, z.string().trim().min(1).optional()),
+
+  sort: z.enum(["a-z", "z-a", "newest", "oldest"]).optional().default("newest"),
+
+  page: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().int().positive().default(1),
+  ),
+
+  limit: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().int().positive().max(100).default(4),
+  ),
+});
+
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
 export type AddMemberInput = z.infer<typeof addMemberSchema>;
+export type GetAllProjectsQueryInput = z.infer<
+  typeof getAllProjectsQuerySchema
+>;

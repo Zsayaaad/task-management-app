@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { projectService } from "./projects.service.js";
 import { StatusCodes } from "http-status-codes";
+import { getAllProjectsQuerySchema } from "./projects.schema.js";
 
 export const createProject = async (req: Request, res: Response) => {
   const project = await projectService.createProject(
@@ -12,12 +13,15 @@ export const createProject = async (req: Request, res: Response) => {
 };
 
 export const getAllProjects = async (req: Request, res: Response) => {
-  const projects = await projectService.getAllProjects(
+  const query = getAllProjectsQuerySchema.parse(req.query);
+
+  const result = await projectService.getAllProjects(
     req.user!.userId,
     req.user!.role,
+    query,
   );
 
-  return res.status(StatusCodes.OK).json({ projects });
+  return res.status(StatusCodes.OK).json(result);
 };
 
 export const getProjectById = async (req: Request, res: Response) => {
