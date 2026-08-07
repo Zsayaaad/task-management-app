@@ -14,8 +14,6 @@ export const projectsQuery = (params) => {
     queryFn: async () => {
       const { data } = await customFetch.get("/projects", { params });
 
-      console.log(data);
-
       return data;
     },
   };

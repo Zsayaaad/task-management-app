@@ -4,10 +4,9 @@ import { projectsQuery } from "./loader";
 import ProjectsSearchFilter from "../../components/ProjectsSearchFilter";
 import ProjectsContainer from "../../components/ProjectsContainer";
 import PaginationBtnContainer from "../../components/PaginationBtnContainer";
+import Loading from "../../components/Loading";
 
 const Projects = () => {
-  // const { projects } = useQuery(projectsQuery).data;
-
   const [searchParams] = useSearchParams();
 
   // Extract params from URL to pass to the API
@@ -18,18 +17,15 @@ const Projects = () => {
     limit: 4, // 4 items per page
   };
 
-  const { data, isError } = useQuery(projectsQuery(params));
+  const { data, isError, isLoading } = useQuery(projectsQuery(params));
 
-  console.log(data);
-
-  // const projects = data?.projects || [];
-  const projects = Array.isArray(data?.projects)
-    ? data.projects
-    : Array.isArray(data)
-      ? data
-      : [];
+  const projects = data?.projects || [];
 
   const pagination = data?.pagination || { currentPage: 1, totalPages: 1 };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (isError) {
     return (
