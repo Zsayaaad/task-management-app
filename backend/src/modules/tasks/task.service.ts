@@ -96,7 +96,11 @@ export const getAllTasks = async (
 
   const skip = (page - 1) * limit;
 
-  const [totalTasks, tasks] = await Promise.all([
+  const [project, totalTasks, tasks] = await Promise.all([
+    prisma.project.findUnique({
+      where: { id: projectId },
+      select: { name: true, description: true },
+    }),
     prisma.task.count({ where }),
     prisma.task.findMany({
       where,
@@ -115,6 +119,7 @@ export const getAllTasks = async (
   ]);
 
   return {
+    project,
     tasks,
     pagination: {
       totalTasks,

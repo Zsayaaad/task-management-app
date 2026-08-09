@@ -6,6 +6,8 @@ export const projectTasksQuery = (projectId, params) => {
 
   return {
     queryKey: [
+      "projects",
+      projectId,
       "tasks",
       search ?? "",
       status ?? "all",

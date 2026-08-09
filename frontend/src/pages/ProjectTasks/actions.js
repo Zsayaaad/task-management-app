@@ -15,6 +15,7 @@ export const deleteTaskAction =
       toast.success(data?.message || "Task deleted successfully");
 
       // Invalidate project tasks and projects count cache
+      // queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
 
