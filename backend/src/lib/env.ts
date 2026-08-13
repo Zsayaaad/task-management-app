@@ -14,6 +14,8 @@ const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 export function loadEnv() {
+  // safeParse
+  // "Validate, clean, and type-check my env variables — and hand me back { success, data } or { success, error } instead of crashing."
   const parsedData = envSchema.safeParse(process.env);
 
   if (!parsedData.success) {

@@ -58,6 +58,8 @@ model Project {
 
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @updatedAt @db.Timestamptz
+
+  @@unique([name, creatorId]) // Prevents duplicate names per user at DB level
 }
 
 model ProjectMember {

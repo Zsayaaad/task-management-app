@@ -1,0 +1,22 @@
+/** @type {import('jest').Config} */
+module.exports = {
+  testEnvironment: "node",
+  roots: ["<rootDir>/src"],
+  testMatch: ["**/*.test.ts"],
+  clearMocks: true,
+  transform: {
+    "^.+\\.ts$": [
+      "@swc/jest",
+      {
+        jsc: {
+          parser: { syntax: "typescript" },
+          target: "es2022",
+        },
+        module: { type: "commonjs" },
+      },
+    ],
+  },
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
+};

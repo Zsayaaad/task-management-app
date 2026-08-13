@@ -16,63 +16,91 @@ export const createProject = async (
   creatorId: string,
   data: CreateProjectInput,
 ) => {
-  const existingProject = await prisma.project.findFirst({
-    where: {
-      name: data.name,
-    },
-  });
+  /**
+  THIS approach has two issues:
+    1- Race condition — the findFirst check is outside the transaction, so two requests could both pass the check before either creates the project
+    2- Unnecessary fetch — you're doing a third query after the transaction
+  */
+  // const existingProject = await prisma.project.findFirst({
+  //   where: {
+  //     name: data.name,
+  //   },
+  // });
 
-  if (existingProject) {
-    throw new ConflictError("You already have a project with this name");
-  }
+  // if (existingProject) {
+  //   throw new ConflictError("You already have a project with this name");
+  // }
 
-  // This way, if something fails, there won't be any partial data loss in the database.
-  const project = await prisma.$transaction(async (tx) => {
-    const newProject = await tx.project.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        creatorId,
-      },
-    });
-
-    await tx.projectMember.create({
-      data: {
-        userId: creatorId,
-        projectId: newProject.id,
-      },
-    });
-
-    return newProject;
-  });
-
-  const projectWithDetails = await prisma.project.findUnique({
-    where: { id: project.id },
-    include: {
-      creator: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
+  try {
+    // Single transaction: create project + member + return with relations
+    // $transaction = atomic writes (all succeed or all rollback)
+    const project = await prisma.$transaction(async (tx) => {
+      const newProject = await tx.project.create({
+        data: {
+          name: data.name,
+          description: data.description,
+          creatorId,
         },
-      },
-      members: {
         include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              role: true,
+          creator: {
+            select: { id: true, name: true, email: true, role: true },
+          },
+          members: {
+            include: {
+              user: {
+                select: { id: true, name: true, email: true, role: true },
+              },
             },
           },
         },
-      },
-    },
-  });
+      });
 
-  return projectWithDetails;
+      await tx.projectMember.create({
+        data: {
+          userId: creatorId,
+          projectId: newProject.id,
+        },
+      });
+
+      return newProject;
+    });
+
+    return project;
+  } catch (error: any) {
+    console.log(error);
+
+    if (error.code === "P2002") {
+      throw new ConflictError("You already have a project with this name");
+    }
+    throw error;
+  }
+
+  // const projectWithDetails = await prisma.project.findUnique({
+  //   where: { id: project.id },
+  //   include: {
+  //     creator: {
+  //       select: {
+  //         id: true,
+  //         name: true,
+  //         email: true,
+  //         role: true,
+  //       },
+  //     },
+  //     members: {
+  //       include: {
+  //         user: {
+  //           select: {
+  //             id: true,
+  //             name: true,
+  //             email: true,
+  //             role: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+  // return projectWithDetails;
 };
 
 export const getAllProjects = async (
@@ -127,24 +155,6 @@ export const getAllProjects = async (
       limit,
     },
   };
-
-  // const projects = await prisma.project.findMany({
-  //   where: role === Role.ADMIN ? {} : { members: { some: { userId: userId } } },
-  //   include: {
-  //     creator: {
-  //       select: { id: true, name: true, email: true, role: true },
-  //     },
-  //     _count: {
-  //       select: {
-  //         members: true,
-  //         tasks: true,
-  //       },
-  //     },
-  //   },
-  //   orderBy: { createdAt: "desc" },
-  // });
-
-  // return projects;
 };
 
 export const getProjectById = async (projectId: string) => {
@@ -262,6 +272,41 @@ export async function removeMember(
   });
 }
 
+// export const sum = (a: number, b: number) => a + b;
+
+// export const greeting = (name: string) => `Hello ${name}!`;
+
+// export const isEven = (number: number) => (number % 2 === 0 ? true : false);
+
+// // Arrays
+// const ANIMALS = ["cat", "dog", "bird"];
+
+// // Objects
+// const getOrderById = (id?: number) => {
+//   if (!id) throw new Error("id cannot be undefined");
+//   return { id: id, price: 10 };
+// };
+
+// // Async Code
+// export const getOrders = async () => {
+//   return [
+//     { id: 1, price: 10 },
+//     { id: 2, price: 50 },
+//   ];
+// };
+
+// export const getProjectName = async (projectId: string) => {
+//   const project = await prisma.project.findUnique({
+//     where: { id: projectId },
+//   });
+
+//   if (!project) {
+//     throw new NotFoundError("Project not found");
+//   }
+
+//   return project.name;
+// };
+
 export const projectService = {
   createProject,
   getAllProjects,
@@ -271,4 +316,11 @@ export const projectService = {
   deleteProject,
   addMember,
   removeMember,
+  // sum,
+  // greeting,
+  // isEven,
+  // ANIMALS,
+  // getOrderById,
+  // getOrders,
+  // getProjectName,
 };
