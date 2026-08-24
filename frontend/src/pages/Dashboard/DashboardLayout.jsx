@@ -65,7 +65,7 @@ const DashboardLayout = ({ queryClient }) => {
                 <span className="material-symbols-outlined text-xl">bolt</span>
               </div>
               <span className="font-page-title text-xl text-on-surface tracking-tight">
-                TaskFlow
+                ProjectFlow
               </span>
             </div>
 
@@ -147,7 +147,7 @@ const DashboardLayout = ({ queryClient }) => {
               <span className="material-symbols-outlined text-lg">bolt</span>
             </div>
             <span className="font-page-title text-lg text-on-surface">
-              TaskFlow
+              ProjectFlow
             </span>
           </div>
           <button

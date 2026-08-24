@@ -47,7 +47,7 @@ const Profile = () => {
           <div className="space-y-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <h2 className="font-section-heading text-xl font-bold text-on-surface">
-                {user.name || "TaskFlow User"}
+                {user.name || "ProjectFlow User"}
               </h2>
               <span
                 className={`font-label-caps text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${getRoleBadgeStyle(
