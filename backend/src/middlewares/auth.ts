@@ -9,6 +9,7 @@ import { isAdmin } from "../lib/roles.js";
 
 export interface AuthenticatedUserPayload {
   userId: string;
+  name: string;
   role: Role;
 }
 
@@ -24,8 +25,10 @@ export const authenticatedUser = (
   }
 
   try {
-    const { userId, role } = verifyToken(token) as AuthenticatedUserPayload;
-    req.user = { userId, role };
+    const { userId, role, name } = verifyToken(
+      token,
+    ) as AuthenticatedUserPayload;
+    req.user = { userId, role, name };
     next();
   } catch (error) {
     throw new UnauthenticatedError("Invalid or expired token");

@@ -9,6 +9,9 @@ const envSchema = z.object({
 
   JWT_SECRET: z.string().min(1),
   JWT_EXPIRES_IN: z.string().default("7d"),
+
+  STREAM_API_KEY: z.string(),
+  STREAM_API_SECRET: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;
