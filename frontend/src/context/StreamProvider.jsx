@@ -1,53 +1,63 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import customFetch from "../utils/customFetch";
 import { StreamChat } from "stream-chat";
-import Loading from "../components/Loading";
 import { StreamContext } from "./StreamContext";
 
 export const StreamProvider = ({ children }) => {
   const [chatClient, setChatClient] = useState(null);
-  const [isReady, setIsReady] = useState(false);
+  const clientRef = useRef(null);
 
   useEffect(() => {
-    let chat;
-    let cancelled = false;
+    let isActive = true;
 
-    const initClients = async () => {
+    const connect = async () => {
       try {
-        // Fetch API Key and User ID to initialize the client
-        const { data: initData } = await customFetch.get(`/stream/token`);
-        const { apikey, userId } = initData;
+        // 1. Fetch API Key and User ID
+        const { data } = await customFetch.get("/stream/token");
+        const { apiKey, userId } = data;
 
-        // Define the Token Provider (SDK calls this when it needs a fresh token)
+        if (!apiKey || !userId) {
+          console.error("Missing Stream credentials");
+          return;
+        }
+
+        // 2. Get or create the singleton instance
+        const client = StreamChat.getInstance(apiKey);
+        clientRef.current = client;
+
+        // 3. Token provider for auto-refresh
         const tokenProvider = async () => {
-          const { data } = await customFetch.get(`/stream/token`);
-          return data.token;
+          const { data: refreshData } = await customFetch.get("/stream/token");
+          return refreshData.token;
         };
 
-        // Initialize and Connect
-        chat = StreamChat.getInstance(apikey);
-        await chat.connectUser({ id: userId }, tokenProvider);
+        // 4. Connect (Guard against React StrictMode double-mount)
+        // prevents React from trying to connect the WebSocket twice in development mode.
+        if (!client.user) {
+          await client.connectUser({ id: userId }, tokenProvider);
+        }
 
-        if (cancelled) return;
-        setChatClient(chat);
-        setIsReady(true);
+        if (isActive) {
+          setChatClient(client);
+        }
       } catch (error) {
         console.error("Stream connection failed:", error);
       }
     };
 
-    initClients();
+    connect();
 
-    // Cleanup on unmount (e.g. logout)
+    // Cleanup on unmount (e.g., logout)
     return () => {
-      if (chat) chat.disconnectUser();
+      isActive = false;
+      if (clientRef.current && clientRef.current.user) {
+        clientRef.current.disconnectUser();
+      }
     };
   }, []);
 
-  if (!isReady) {
-    return <Loading />;
-  }
-
+  // NON-BLOCKING: We render children immediately.
+  // chatClient is null for a split second, then updates.
   return (
     <StreamContext.Provider value={{ chatClient }}>
       {children}
