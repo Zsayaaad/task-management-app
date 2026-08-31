@@ -11,6 +11,15 @@ import {
   GetAllProjectsQueryInput,
   UpdateProjectInput,
 } from "./projects.schema.js";
+import { streamClient } from "../../lib/stream.js";
+
+/* =========================================================================
+   PHASE 2 — STREAM SYNC
+   Every Project maps 1:1 to a Stream "messaging" channel with a
+   predictable ID:  project-<projectId>
+   ========================================================================= */
+export const getProjectChannel = (projectId: string) =>
+  streamClient.channel("messaging", `project-${projectId}`);
 
 export const createProject = async (
   creatorId: string,
@@ -64,6 +73,36 @@ export const createProject = async (
 
       return newProject;
     });
+
+    // ---- STREAM SYNC: create the project's chat channel ----
+    try {
+      // Make sure the creator exists in Stream's user storage
+      await streamClient.upsertUsers([
+        {
+          id: creatorId,
+          name: project.creator.name,
+          role: project.creator.role === "ADMIN" ? "admin" : "user",
+        },
+      ]);
+
+      // Create the channel tied to this project
+      const channel = streamClient.channel(
+        "messaging",
+        `project-${project.id}`,
+        {
+          name: project.name,
+          created_by_id: creatorId,
+          members: [creatorId],
+        },
+      );
+      await channel.create();
+    } catch (streamError) {
+      // DB is the source of truth — never fail the request because of Stream
+      console.error(
+        `Stream: failed to create channel for project ${project.id}`,
+        streamError,
+      );
+    }
 
     return project;
   } catch (error: any) {
@@ -194,6 +233,18 @@ export const updateProject = async (
     data,
   });
 
+  // ---- STREAM SYNC: keep the channel name in sync with the project name ----
+  if (data.name) {
+    try {
+      await getProjectChannel(projectId).update({ name: data.name });
+    } catch (streamError) {
+      console.error(
+        `Stream: failed to rename channel for project ${projectId}`,
+        streamError,
+      );
+    }
+  }
+
   return updatedProject;
 };
 
@@ -202,6 +253,15 @@ export const deleteProject = async (projectId: string) => {
     where: { id: projectId },
   });
 
+  // ---- STREAM SYNC: delete the channel + its message history ----
+  try {
+    await getProjectChannel(projectId).delete();
+  } catch (streamError) {
+    console.error(
+      `Stream: failed to delete channel for project ${projectId}`,
+      streamError,
+    );
+  }
   return { message: "Project deleted successfully" };
 };
 
@@ -218,7 +278,11 @@ export const getProjectMembers = async (projectId: string) => {
   return members.map((m) => m.user);
 };
 
-export const addMember = async (projectId: string, data: AddMemberInput) => {
+export const addMember = async (
+  projectId: string,
+  data: AddMemberInput,
+  addedById: string,
+) => {
   const user = await prisma.user.findUnique({
     where: { email: data.email },
     select: { id: true, name: true, email: true, role: true },
@@ -242,6 +306,34 @@ export const addMember = async (projectId: string, data: AddMemberInput) => {
     data: { userId: user.id, projectId },
   });
 
+  // ---- STREAM SYNC: give the new member access to the project chat ----
+  try {
+    // Ensure the user exists in Stream's user storage
+    await streamClient.upsertUsers([
+      {
+        id: user.id,
+        name: user.name,
+        role: user.role === "ADMIN" ? "admin" : "user",
+      },
+    ]);
+
+    // Add them to the project's channel
+    const channel = getProjectChannel(projectId);
+    await channel.addMembers([user.id]);
+
+    // Announce it in the chat (silent = no push/unread noise)
+    await channel.sendMessage({
+      text: `${user.name} was added to the project.`,
+      user_id: addedById,
+      silent: true,
+    });
+  } catch (streamError) {
+    console.error(
+      `Stream: failed to sync new member for project ${projectId}`,
+      streamError,
+    );
+  }
+
   return user;
 };
 
@@ -259,6 +351,13 @@ export async function removeMember(
     where: {
       userId_projectId: { userId, projectId },
     },
+    include: {
+      user: {
+        select: {
+          name: true, // This fetches the user relation but only grabs the 'name' field
+        },
+      },
+    },
   });
 
   if (!membership) {
@@ -270,44 +369,27 @@ export async function removeMember(
       userId_projectId: { userId, projectId },
     },
   });
+
+  // ---- STREAM SYNC: revoke chat access ----
+  try {
+    const channel = getProjectChannel(projectId);
+    await channel.removeMembers([userId]);
+
+    await channel.sendMessage({
+      text: `${membership.user.name} was removed from the project`,
+      user_id: requesterId, // Recommended: specify who triggered the system message
+      silent: true, // Optional: prevent push notifications for system messages
+    });
+  } catch (streamError) {
+    console.error(
+      `Stream: failed to sync member removal for project ${projectId}`,
+      streamError,
+    );
+  }
 }
 
-// export const sum = (a: number, b: number) => a + b;
-
-// export const greeting = (name: string) => `Hello ${name}!`;
-
-// export const isEven = (number: number) => (number % 2 === 0 ? true : false);
-
-// // Arrays
-// const ANIMALS = ["cat", "dog", "bird"];
-
-// // Objects
-// const getOrderById = (id?: number) => {
-//   if (!id) throw new Error("id cannot be undefined");
-//   return { id: id, price: 10 };
-// };
-
-// // Async Code
-// export const getOrders = async () => {
-//   return [
-//     { id: 1, price: 10 },
-//     { id: 2, price: 50 },
-//   ];
-// };
-
-// export const getProjectName = async (projectId: string) => {
-//   const project = await prisma.project.findUnique({
-//     where: { id: projectId },
-//   });
-
-//   if (!project) {
-//     throw new NotFoundError("Project not found");
-//   }
-
-//   return project.name;
-// };
-
 export const projectService = {
+  getProjectChannel,
   createProject,
   getAllProjects,
   getProjectById,
@@ -316,11 +398,4 @@ export const projectService = {
   deleteProject,
   addMember,
   removeMember,
-  // sum,
-  // greeting,
-  // isEven,
-  // ANIMALS,
-  // getOrderById,
-  // getOrders,
-  // getProjectName,
 };

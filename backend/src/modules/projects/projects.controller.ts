@@ -61,7 +61,11 @@ export const getProjectMembers = async (req: Request, res: Response) => {
 export const addMember = async (req: Request, res: Response) => {
   const projectId = req.params.projectId as string;
 
-  const member = await projectService.addMember(projectId, req.body);
+  const member = await projectService.addMember(
+    projectId,
+    req.body,
+    req.user!.userId,
+  );
 
   return res.status(StatusCodes.CREATED).json({
     message: "Member added to project successfully",
