@@ -77,20 +77,6 @@
   }
 }
 
-/* @layer utilities {
-   .material-symbols-outlined {
-    font-variation-settings:
-      "FILL" 0,
-      "wght" 400,
-      "GRAD" 0,
-      "opsz" 24;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    vertical-align: middle;
-  }
-} */
-
 :root {
   font-family: "Inter", sans-serif;
   color-scheme: dark;
@@ -142,4 +128,10 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
+}
+
+/* ================= STREAM CHAT (v14) ================= */
+/* Make the SDK fill the fixed-height wrapper on the Chat page */
+.str-chat {
+  height: 100%;
 }

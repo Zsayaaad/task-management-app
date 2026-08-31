@@ -43,6 +43,7 @@ import { deleteTaskAction } from "./pages/ProjectTasks/actions";
 import { profileLoader } from "./pages/Profile/loader";
 import Error from "./pages/Error";
 import { ErrorElement } from "./components";
+import Chatting from "./pages/chat/Chatting";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
             element: <Projects />,
             loader: projectsLoader(queryClient),
             errorElement: <ErrorElement />,
+          },
+          {
+            path: "chat",
+            element: <Chatting />,
           },
           {
             path: "projects/:projectId/tasks",

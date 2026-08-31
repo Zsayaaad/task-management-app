@@ -93,6 +93,22 @@ const DashboardLayout = ({ queryClient }) => {
                 </NavLink>
 
                 <NavLink
+                  to="/dashboard/chat"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2.5 rounded-lg font-button text-sm transition-all relative ${
+                      isActive
+                        ? "bg-surface-bright text-primary font-semibold border-l-4 border-primary pl-2"
+                        : "text-text-muted hover:text-on-surface hover:bg-surface-dim"
+                    }`
+                  }
+                >
+                  <span className="material-symbols-outlined text-xl">
+                    chat
+                  </span>
+                  Chat
+                </NavLink>
+
+                <NavLink
                   to="/dashboard/profile"
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-lg font-button text-sm transition-all relative ${
@@ -212,6 +228,19 @@ const DashboardLayout = ({ queryClient }) => {
               <span className="material-symbols-outlined text-xl">folder</span>
               Projects
             </NavLink>
+
+            <NavLink
+              to="/dashboard/chat"
+              className={({ isActive }) =>
+                `flex flex-col items-center py-1 px-4 text-xs font-medium rounded-lg ${
+                  isActive ? "text-primary" : "text-text-muted"
+                }`
+              }
+            >
+              <span className="material-symbols-outlined text-xl">chat</span>
+              Chat
+            </NavLink>
+
             <NavLink
               to="/dashboard/profile"
               className={({ isActive }) =>
