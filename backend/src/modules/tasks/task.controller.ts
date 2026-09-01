@@ -18,7 +18,12 @@ export const createTask = async (req: Request, res: Response) => {
   const { id: projectId } = req.project;
   const creatorId = req.user!.userId;
 
-  const task = await taskService.createTask(projectId, creatorId, req.body);
+  const { userId, name } = req.user!;
+
+  const task = await taskService.createTask(projectId, creatorId, req.body, {
+    userId,
+    name,
+  });
 
   return res.status(StatusCodes.CREATED).json({
     message: "Task created successfully",
@@ -52,11 +57,13 @@ export const updateTask = async (req: Request, res: Response) => {
   const { id: projectId } = req.project;
   const taskId = extractTaskId(req);
 
+  const { userId, role, name } = req.user!;
+
   const updatedTask = await taskService.updateTask(
     projectId,
     taskId,
     req.body,
-    { userId: req.user!.userId, role: req.user!.role },
+    { userId, role, name },
   );
 
   return res.status(StatusCodes.OK).json({
@@ -70,11 +77,12 @@ export const deleteTask = async (req: Request, res: Response) => {
 
   const taskId = extractTaskId(req);
 
-  const { userId, role } = req.user!;
+  const { userId, role, name } = req.user!;
 
   const result = await taskService.deleteTask(projectId, taskId, {
     userId,
     role,
+    name,
   });
 
   return res.status(StatusCodes.OK).json(result);

@@ -32,6 +32,7 @@ export const register = async (data: RegisterInput) => {
 
   const token = generateToken({
     userId: user.id,
+    name: user.name,
     role: user.role,
   });
 
@@ -54,6 +55,7 @@ export const login = async (data: LoginInput) => {
 
   const token = generateToken({
     userId: user.id,
+    name: user.name,
     role: user.role,
   });
 

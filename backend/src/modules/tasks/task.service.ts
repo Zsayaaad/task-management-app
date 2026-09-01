@@ -10,11 +10,34 @@ import {
   GetAllTasksQueryInput,
   UpdateTaskInput,
 } from "./task.schema.js";
+import { streamClient } from "../../lib/stream.js";
+
+/* =========================================================================
+   PHASE 4 — TASK EVENT ANNOUNCEMENTS
+   Silent messages pushed to the project's chat channel whenever a
+   task is created / updated / deleted.
+   ========================================================================= */
+const announceToProject = async (
+  projectId: string,
+  text: string,
+  senderId: string,
+) => {
+  try {
+    const channel = streamClient.channel("messaging", `project-${projectId}`);
+    await channel.sendMessage({ text, user_id: senderId, silent: true });
+  } catch (streamError) {
+    console.error(
+      `Stream: failed to announce task event for project ${projectId}`,
+      streamError,
+    );
+  }
+};
 
 export const createTask = async (
   projectId: string,
   creatorId: string,
   data: CreateTaskInput,
+  requester: { userId: string; name: string }, // NEW
 ) => {
   const assignee = await prisma.user.findUnique({
     where: { id: data.assigneeId },
@@ -73,6 +96,14 @@ export const createTask = async (
       },
     },
   });
+
+  // ---- STREAM SYNC: announce creation in the project chat ----
+  await announceToProject(
+    projectId,
+    `📋 "${task.title}" was created by ${requester.name} and assigned to ${task.assignee.name} (priority: ${task.priority}).`,
+    requester.userId,
+  );
+
   return task;
 };
 
@@ -157,7 +188,7 @@ export const updateTask = async (
   projectId: string,
   taskId: string,
   data: UpdateTaskInput,
-  requester: { userId: string; role: Role },
+  requester: { userId: string; role: Role; name: string }, // NEW: + name
 ) => {
   const task = await prisma.task.findUnique({
     where: { id: taskId, projectId: projectId },
@@ -202,13 +233,40 @@ export const updateTask = async (
     },
   });
 
+  // ---- STREAM SYNC: announce what actually changed ----
+  const changes: string[] = [];
+  if (data.status && data.status !== task.status) {
+    changes.push(`status: ${task.status} → ${data.status}`);
+  }
+
+  if (data.priority && data.priority !== task.priority) {
+    changes.push(`priority: ${task.priority} → ${data.priority}`);
+  }
+
+  if (data.assigneeId && data.assigneeId !== task.assigneeId) {
+    changes.push(`reassigned to ${updatedTask.assignee.name}`);
+  }
+
+  if (data.title && data.title !== task.title) {
+    changes.push(`renamed from "${task.title}"`);
+  }
+
+  if (changes.length > 0) {
+    const emoji = data.status === "DONE" ? "✅" : "🔄";
+    await announceToProject(
+      projectId,
+      `${emoji} "${updatedTask.title}" was updated by ${requester.name} — ${changes.join(", ")}.`,
+      requester.userId,
+    );
+  }
+
   return updatedTask;
 };
 
 export const deleteTask = async (
   projectId: string,
   taskId: string,
-  requester: { userId: string; role: Role },
+  requester: { userId: string; role: Role; name: string }, // NEW: + name
 ) => {
   const task = await prisma.task.findUnique({
     where: { id: taskId, projectId },
@@ -229,6 +287,13 @@ export const deleteTask = async (
   await prisma.task.delete({
     where: { id: taskId },
   });
+
+  // ---- STREAM SYNC: announce deletion ----
+  await announceToProject(
+    projectId,
+    `🗑️ "${task.title}" was deleted by ${requester.name}.`,
+    requester.userId,
+  );
 
   return { message: "Task deleted successfully" };
 };

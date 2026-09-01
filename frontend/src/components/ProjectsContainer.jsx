@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Form, Link } from "react-router-dom";
 
-const ProjectsContainer = ({ projects }) => {
+const ProjectsContainer = ({ projects, unreadMap = {} }) => {
   const [selectedProjectToDelete, setSelectedProjectToDelete] = useState(null);
 
   // Safety fallback
@@ -47,12 +47,24 @@ const ProjectsContainer = ({ projects }) => {
           >
             <div>
               <div className="flex items-start justify-between gap-2 mb-3">
-                <Link
-                  to={`/dashboard/projects/${project.id}/tasks`}
-                  className="font-section-heading font-semibold text-xl text-on-surface hover:text-primary transition-colors line-clamp-1"
-                >
-                  {project.name}
-                </Link>
+                {/* Title + Unread Badge of Chats */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <Link
+                    to={`/dashboard/projects/${project.id}/tasks`}
+                    className="font-section-heading font-semibold text-xl text-on-surface hover:text-primary transition-colors line-clamp-1"
+                  >
+                    {project.name}
+                  </Link>
+                  {(unreadMap[project.id] ?? 0) > 0 && (
+                    <span
+                      className="shrink-0 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-danger text-white text-[11px] font-bold"
+                      title="Unread chat messages"
+                    >
+                      {unreadMap[project.id]}
+                    </span>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-1 shrink-0">
                   <Link
                     to={`/dashboard/editProject/${project.id}`}

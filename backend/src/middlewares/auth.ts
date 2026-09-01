@@ -29,6 +29,7 @@ export const authenticatedUser = (
       token,
     ) as AuthenticatedUserPayload;
     req.user = { userId, role, name };
+
     next();
   } catch (error) {
     throw new UnauthenticatedError("Invalid or expired token");
