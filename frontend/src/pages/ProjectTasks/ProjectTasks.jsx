@@ -47,13 +47,27 @@ const ProjectTasks = () => {
             )}
           </div>
 
-          <Link
-            to={`/dashboard/projects/${projectId}/add-task`}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 transition-colors shadow-sm shrink-0 mt-2 sm:mt-0"
-          >
-            <span className="material-symbols-outlined text-lg">add</span>
-            Add Task
-          </Link>
+          <div className="flex items-center gap-3 shrink-0 mt-2 sm:mt-0">
+            {/* PHASE 5/6: Start Meeting Button */}
+            <Link
+              to={`/dashboard/projects/${projectId}/meeting`}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white font-medium text-sm rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+            >
+              <span className="material-symbols-outlined text-lg">
+                videocam
+              </span>
+              Start Meeting
+            </Link>
+
+            {/* Existing Add Task Button */}
+            <Link
+              to={`/dashboard/projects/${projectId}/add-task`}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary font-medium text-sm rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              Add Task
+            </Link>
+          </div>
         </div>
 
         {/* Search & Filters */}

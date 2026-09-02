@@ -19,6 +19,8 @@ import {
   ProjectMembers,
   EditTask,
   Profile,
+  Chatting,
+  ProjectMeeting,
 } from "./pages";
 
 import { registerAction } from "./pages/Register/action";
@@ -43,7 +45,6 @@ import { deleteTaskAction } from "./pages/ProjectTasks/actions";
 import { profileLoader } from "./pages/Profile/loader";
 import Error from "./pages/Error";
 import { ErrorElement } from "./components";
-import Chatting from "./pages/chat/Chatting";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -91,8 +92,12 @@ const router = createBrowserRouter([
             element: <Chatting />,
           },
           {
+            path: "projects/:projectId/meeting",
+            element: <ProjectMeeting />,
+          },
+          {
             path: "projects/:projectId/tasks",
-            element: <ProjectTasks />, // TODO👁️‍🗨️👁️‍🗨️👁️‍🗨️: SHOW THE NAME OF PROJECT AND FULL DESCRIPTION
+            element: <ProjectTasks />,
             loader: projectTasksLoader(queryClient),
             errorElement: <ErrorElement />,
           },

@@ -1,65 +1,65 @@
 import { useState, useEffect, useRef } from "react";
 import customFetch from "../utils/customFetch";
 import { StreamChat } from "stream-chat";
+import { StreamVideoClient } from "@stream-io/video-react-sdk";
 import { StreamContext } from "./StreamContext";
 
 export const StreamProvider = ({ children }) => {
   const [chatClient, setChatClient] = useState(null);
-  const clientRef = useRef(null);
+  const [videoClient, setVideoClient] = useState(null);
+
+  const chatRef = useRef(null);
+  const videoRef = useRef(null); // NEW
 
   useEffect(() => {
-    let isActive = true;
+    let cancelled = false;
 
-    const connect = async () => {
+    const initClients = async () => {
       try {
-        // 1. Fetch API Key and User ID
+        // Fetch API Key and User ID
         const { data } = await customFetch.get("/stream/token");
-        const { apiKey, userId } = data;
 
-        if (!apiKey || !userId) {
-          console.error("Missing Stream credentials");
-          return;
+        const { apiKey, userId, chatToken, videoToken } = data;
+
+        if (!apiKey || !userId) return;
+
+        // --- CHAT SETUP ---
+        const chat = StreamChat.getInstance(apiKey);
+        chatRef.current = chat;
+
+        if (!chat.user) {
+          await chat.connectUser({ id: userId }, chatToken);
         }
 
-        // 2. Get or create the singleton instance
-        const client = StreamChat.getInstance(apiKey);
-        clientRef.current = client;
+        // --- VIDEO SETUP ---
+        const video = new StreamVideoClient({ apiKey });
+        videoRef.current = video;
 
-        // 3. Token provider for auto-refresh
-        const tokenProvider = async () => {
-          const { data: refreshData } = await customFetch.get("/stream/token");
-          return refreshData.token;
-        };
+        // Connect video user (Stream fetches name/image from your backend upsert)
+        await video.connectUser({ id: userId }, videoToken);
 
-        // 4. Connect (Guard against React StrictMode double-mount)
-        // prevents React from trying to connect the WebSocket twice in development mode.
-        if (!client.user) {
-          await client.connectUser({ id: userId }, tokenProvider);
-        }
-
-        if (isActive) {
-          setChatClient(client);
-        }
+        if (cancelled) return;
+        setChatClient(chat);
+        setVideoClient(video);
       } catch (error) {
         console.error("Stream connection failed:", error);
       }
     };
 
-    connect();
+    initClients();
 
     // Cleanup on unmount (e.g., logout)
     return () => {
-      isActive = false;
-      if (clientRef.current && clientRef.current.user) {
-        clientRef.current.disconnectUser();
-      }
+      cancelled = true;
+      if (chatRef.current?.user) chatRef.current.disconnectUser();
+      if (videoRef.current?.user) videoRef.current.disconnectUser();
     };
   }, []);
 
   // NON-BLOCKING: We render children immediately.
   // chatClient is null for a split second, then updates.
   return (
-    <StreamContext.Provider value={{ chatClient }}>
+    <StreamContext.Provider value={{ chatClient, videoClient }}>
       {children}
     </StreamContext.Provider>
   );

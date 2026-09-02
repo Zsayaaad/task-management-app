@@ -9,3 +9,5 @@ export { default as AddMember } from "./AddMember/AddMember";
 export { default as ProjectMembers } from "./ProjectMembers/ProjectMembers";
 export { default as EditTask } from "./EditTask/EditTask";
 export { default as Profile } from "./Profile/Profile";
+export { default as Chatting } from "./Chat/Chatting";
+export { default as ProjectMeeting } from "./ProjectMeeting/ProjectMeeting";
