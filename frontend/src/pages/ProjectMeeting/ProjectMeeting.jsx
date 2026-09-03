@@ -18,32 +18,44 @@ const ProjectMeeting = () => {
   useEffect(() => {
     if (!videoClient) return;
 
+    // Fix: keep the call in a local variable inside the effect + an active flag,
+    //  so leave() is guaranteed to run on unmount, even if unmount happens mid‑join.
+    let active = true;
+    let myCall = null;
+
     const initCall = async () => {
-      // 1. Create the call using the predictable ID (matches Chat!)
-      const myCall = videoClient.call("default", `project-${projectId}`);
+      try {
+        myCall = videoClient.call("default", `project-${projectId}`);
+        await myCall.join({ create: true });
 
-      // 2. Join or create the call (creates it if it doesn't exist)
-      await myCall.join({ create: true });
-
-      setCall(myCall);
+        // Unmounted while joining (StrictMode / fast navigation)? Leave immediately.
+        if (!active) {
+          myCall.leave().catch(() => {});
+          return;
+        }
+        setCall(myCall);
+      } catch (error) {
+        console.error("Failed to join the call:", error);
+      }
     };
 
     initCall();
 
-    // 3. Cleanup: Leave the call and turn off camera/mic when component unmounts
+    // GUARANTEED cleanup: local var + flag => leave() ALWAYS runs on unmount
     return () => {
-      if (call) {
-        call.leave().catch(console.error);
-      }
+      active = false;
+      if (myCall) myCall.leave().catch(() => {});
     };
   }, [videoClient, projectId]);
 
   if (!videoClient || !call) return <Loading />;
 
   return (
-    <div className="h-[calc(100vh-6rem)] flex flex-col bg-background rounded-xl overflow-hidden border border-border">
-      {/* Meeting Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border bg-surface-container">
+    // Full-viewport overlay: escapes dashboard padding/sidebar,
+    // gives the SDK exact dimensions on every screen size.
+    <div className="fixed inset-0 z-50 flex flex-col bg-black overflow-hidden">
+      {/* Meeting Header (fixed height) */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-container shrink-0">
         <Link
           to={`/dashboard/projects/${projectId}/tasks`}
           className="flex items-center gap-2 text-text-muted hover:text-primary transition-colors"
@@ -59,11 +71,11 @@ const ProjectMeeting = () => {
         </button>
       </div>
 
-      {/* Stream Video UI */}
-      <div className="flex-1 relative bg-black">
+      {/* Video area: fills the remaining viewport exactly */}
+      <div className="flex-1 min-h-0">
         <StreamTheme className="h-full w-full">
           <StreamCall call={call}>
-            <SpeakerLayout />
+            <SpeakerLayout participantsBarPosition="bottom" />
             <CallControls
               onLeave={() => navigate(`/dashboard/projects/${projectId}/tasks`)}
             />
