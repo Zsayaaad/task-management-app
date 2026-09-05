@@ -12,6 +12,11 @@ const envSchema = z.object({
 
   STREAM_API_KEY: z.string(),
   STREAM_API_SECRET: z.string(),
+
+  // ImageKit credentials
+  IMAGEKIT_PUBLIC_KEY: z.string(),
+  IMAGEKIT_PRIVATE_KEY: z.string(),
+  IMAGEKIT_URL_ENDPOINT: z.url(),
 });
 
 export type Env = z.infer<typeof envSchema>;

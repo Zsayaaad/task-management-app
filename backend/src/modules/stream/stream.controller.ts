@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { chatClient, streamClient, videoClient } from "../../lib/stream.js";
 import { getEnv } from "../../lib/env.js";
+import { prisma } from "../../lib/prisma.js";
 
 export const generateStreamToken = async (
   req: Request,
@@ -14,9 +15,22 @@ export const generateStreamToken = async (
     const userName = req.user!.name;
     const streamRole = role === "ADMIN" ? "admin" : "user";
 
+    // Fetch user's avatar URL from database
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatarUrl: true },
+    });
+
     // 1. Upsert user in BOTH Chat and Video databases
-    const userData = { id: userId, name: userName, role: streamRole };
+    const userData = {
+      id: userId,
+      name: userName,
+      role: streamRole,
+      image: user?.avatarUrl || undefined,
+    };
+
     await chatClient.upsertUsers([userData]);
+
     await videoClient.upsertUsers([userData]);
 
     // Generate the jwt token for this specific user

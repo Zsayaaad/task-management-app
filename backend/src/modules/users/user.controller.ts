@@ -17,6 +17,17 @@ export const updateProfile = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ msg: "update user", newUser });
 };
 
+export const updateAvatar = async (req: Request, res: Response) => {
+  const updatedUser = await userService.updateAvatar(
+    req.user!.userId,
+    req.body,
+  );
+  res.status(StatusCodes.OK).json({
+    message: "Avatar updated successfully",
+    user: updatedUser,
+  });
+};
+
 export const changePassword = async (req: Request, res: Response) => {
   const result = await userService.changePassword(req.user!.userId, req.body);
 
@@ -38,6 +49,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
 export const userController = {
   getCurrentUser,
   updateProfile,
+  updateAvatar,
   changePassword,
   deleteAccount,
 };

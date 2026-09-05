@@ -11,6 +11,10 @@ export const updateProfileSchema = z.object({
   }),
 });
 
+export const updateAvatarSchema = z.object({
+  avatarUrl: z.url("Invalid avatar URL"),
+});
+
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "current password is required"),
@@ -38,3 +42,4 @@ export const deleteAccountSchema = z.object({
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
+export type UpdateAvatarInput = z.infer<typeof updateAvatarSchema>;

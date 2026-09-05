@@ -1,9 +1,11 @@
 import { NotFoundError, UnauthorizedError } from "../../errors/customErrors.js";
+import { imagekit } from "../../lib/imagekit.js";
 import { prisma } from "../../lib/prisma.js";
 import { comparePassword, hashPassword } from "../../utils/hash.js";
 import {
   ChangePasswordInput,
   DeleteAccountInput,
+  UpdateAvatarInput,
   UpdateProfileInput,
 } from "./user.schema.js";
 
@@ -46,6 +48,39 @@ export const updateProfile = async (
   });
 
   return newUser;
+};
+
+export const updateAvatar = async (userId: string, data: UpdateAvatarInput) => {
+  // Fetch current user to get old avatar URL
+  const currentUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { avatarUrl: true },
+  });
+
+  // Delete old avatar from ImageKit if it exists
+  if (currentUser?.avatarUrl) {
+    try {
+      // Extract file ID from URL (ImageKit URLs contain the file ID)
+      const urlParts = currentUser.avatarUrl.split("/");
+      const fileName = urlParts[urlParts.length - 1];
+      // const filePath = `projectflow/avatar/${fileName}`;
+      const filePath = `avatar/${fileName}`;
+
+      await imagekit.deleteFile(filePath);
+    } catch (error) {
+      // Log but don't fail if delete fails (file might already be gone)
+      console.error("Failed to delete old avatar:", error);
+    }
+  }
+
+  // Update user with new avatar URL
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { avatarUrl: data.avatarUrl },
+    omit: { password: true },
+  });
+
+  return updatedUser;
 };
 
 export const changePassword = async (
@@ -98,6 +133,7 @@ export const deleteAccount = async (
     select: {
       // id: true,
       password: true,
+      avatarUrl: true,
     },
   });
 
@@ -108,6 +144,21 @@ export const deleteAccount = async (
   const isPasswordValid = await comparePassword(data.password, user.password);
   if (!isPasswordValid) {
     throw new UnauthorizedError("Password is incorrect");
+  }
+
+  // Delete avatar from ImageKit before deleting account
+  if (user.avatarUrl) {
+    try {
+      // Extract file ID from URL (ImageKit URLs contain the file ID)
+      const urlParts = user.avatarUrl.split("/");
+      const fileName = urlParts[urlParts.length - 1];
+      // const filePath = `projectflow/avatar/${fileName}`;
+      const filePath = `avatar/${fileName}`;
+
+      await imagekit.deleteFile(filePath);
+    } catch (error) {
+      console.error("Failed to delete avatar on account deletion:", error);
+    }
   }
 
   await prisma.user.delete({
@@ -124,6 +175,7 @@ export const deleteAccount = async (
 export const userService = {
   getCurrentUser,
   updateProfile,
+  updateAvatar,
   changePassword,
   deleteAccount,
 };

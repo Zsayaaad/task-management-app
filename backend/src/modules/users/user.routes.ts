@@ -4,6 +4,7 @@ import { validate } from "../../middlewares/validate.js";
 import {
   changePasswordSchema,
   deleteAccountSchema,
+  updateAvatarSchema,
   updateProfileSchema,
 } from "./user.schema.js";
 
@@ -15,6 +16,12 @@ router.patch(
   "/profile",
   validate(updateProfileSchema),
   userController.updateProfile,
+);
+
+router.patch(
+  "/avatar",
+  validate(updateAvatarSchema),
+  userController.updateAvatar,
 );
 
 router.patch(
