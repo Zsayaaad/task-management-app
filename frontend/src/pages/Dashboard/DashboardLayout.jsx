@@ -54,6 +54,26 @@ const DashboardLayout = ({ queryClient }) => {
       .slice(0, 2);
   };
 
+  // Helper to render avatar or initials
+  const renderAvatar = (size = "w-9 h-9", textSize = "text-sm") => {
+    if (user?.avatarUrl) {
+      return (
+        <img
+          src={user.avatarUrl}
+          alt={user.name}
+          className={`${size} rounded-full object-cover border border-primary/30 shrink-0`}
+        />
+      );
+    }
+    return (
+      <div
+        className={`${size} rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-semibold ${textSize} shrink-0`}
+      >
+        {getInitials(user?.name)}
+      </div>
+    );
+  };
+
   return (
     <StreamProvider>
       <DashboardContext.Provider value={{ user, logoutUser }}>
@@ -129,9 +149,7 @@ const DashboardLayout = ({ queryClient }) => {
             {/* User Info & Logout Footer */}
             <div className="pt-4 border-t border-border space-y-3">
               <div className="flex items-center gap-3 px-1">
-                <div className="w-9 h-9 rounded-full bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-semibold text-sm shrink-0">
-                  {getInitials(user?.name)}
-                </div>
+                {renderAvatar()}
                 <div className="overflow-hidden">
                   <p className="font-body text-sm font-medium text-on-surface truncate">
                     {user?.name || "User"}
@@ -147,7 +165,6 @@ const DashboardLayout = ({ queryClient }) => {
                   </span>
                 </div>
               </div>
-
               <button
                 onClick={logoutUser}
                 className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-border text-text-muted hover:text-danger hover:border-danger/40 hover:bg-danger/10 transition-colors font-button text-xs"
@@ -184,9 +201,7 @@ const DashboardLayout = ({ queryClient }) => {
           {isMobileMenuOpen && (
             <div className="md:hidden bg-surface-container border-b border-border p-4 space-y-3 z-20">
               <div className="flex items-center gap-3 pb-3 border-b border-border">
-                <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-semibold text-xs">
-                  {getInitials(user?.name)}
-                </div>
+                {renderAvatar("w-8 h-8", "text-xs")}
                 <div>
                   <p className="text-sm font-medium text-on-surface">
                     {user?.name}

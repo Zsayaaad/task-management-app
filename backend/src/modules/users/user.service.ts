@@ -61,10 +61,10 @@ export const updateAvatar = async (userId: string, data: UpdateAvatarInput) => {
   if (currentUser?.avatarUrl) {
     try {
       // Extract file ID from URL (ImageKit URLs contain the file ID)
+      // Format: https://ik.imagekit.io/your_id/task-management/avatars/filename.jpg
       const urlParts = currentUser.avatarUrl.split("/");
       const fileName = urlParts[urlParts.length - 1];
-      // const filePath = `projectflow/avatar/${fileName}`;
-      const filePath = `avatar/${fileName}`;
+      const filePath = `task-management/avatars/${fileName}`;
 
       await imagekit.deleteFile(filePath);
     } catch (error) {
@@ -152,8 +152,7 @@ export const deleteAccount = async (
       // Extract file ID from URL (ImageKit URLs contain the file ID)
       const urlParts = user.avatarUrl.split("/");
       const fileName = urlParts[urlParts.length - 1];
-      // const filePath = `projectflow/avatar/${fileName}`;
-      const filePath = `avatar/${fileName}`;
+      const filePath = `task-management/avatars/${fileName}`;
 
       await imagekit.deleteFile(filePath);
     } catch (error) {
