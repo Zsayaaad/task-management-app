@@ -12,6 +12,8 @@ import authRouter from "./modules/auth/auth.routes.js";
 import userRouter from "./modules/users/user.routes.js";
 import projectRouter from "./modules/projects/projects.routes.js";
 import taskRouter from "./modules/tasks/task.routes.js";
+import streamRouter from "./modules/stream/stream.routes.js";
+import imagekitRouter from "./modules/imagekit/imagekit.routes.js";
 // middlewares
 import { errorHandlerMiddleware } from "./middlewares/errorHandler.js";
 import { authenticatedUser } from "./middlewares/auth.js";
@@ -29,6 +31,8 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", authenticatedUser, userRouter);
 app.use("/api/v1/projects", authenticatedUser, projectRouter);
 app.use("/api/v1/tasks", authenticatedUser, taskRouter);
+app.use("/api/v1/stream", authenticatedUser, streamRouter);
+app.use("/api/v1/imagekit", authenticatedUser, imagekitRouter);
 // Global Error Handler
 // TRIGGERED BY OUR EXISTING ROUTES IF THERE IS A VALID REQUEST AND HAS AN ERROR
 app.use(errorHandlerMiddleware);

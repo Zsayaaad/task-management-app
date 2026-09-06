@@ -17,6 +17,9 @@ const envSchema = z.object({
   IMAGEKIT_PUBLIC_KEY: z.string(),
   IMAGEKIT_PRIVATE_KEY: z.string(),
   IMAGEKIT_URL_ENDPOINT: z.url(),
+
+  // Redis URL (defaults to local Docker instance)
+  REDIS_URL: z.url().default("redis://localhost:6379"),
 });
 
 export type Env = z.infer<typeof envSchema>;

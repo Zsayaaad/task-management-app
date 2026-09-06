@@ -21,6 +21,7 @@ import imagekitRouter from "./modules/imagekit/imagekit.routes.js";
 // middlewares
 import { errorHandlerMiddleware } from "./middlewares/errorHandler.js";
 import { authenticatedUser } from "./middlewares/auth.js";
+import { redisClient } from "./lib/redis.js";
 
 const env = getEnv();
 
@@ -66,6 +67,17 @@ if (fs.existsSync(publicDir)) {
     res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
   });
 }
+
+// Graceful shutdown
+process.on("SIGTERM", async () => {
+  await redisClient.quit();
+  process.exit(0);
+});
+
+process.on("SIGINT", async () => {
+  await redisClient.quit();
+  process.exit(0);
+});
 
 app.listen(env.PORT, () => {
   console.log(`Server is running on port ${env.PORT}...`);
