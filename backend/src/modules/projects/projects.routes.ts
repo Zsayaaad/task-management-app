@@ -11,12 +11,17 @@ import {
   authorizeProjectCreator,
   checkProjectAccess,
 } from "../../middlewares/checkProjectAccess.js";
+import { sensitiveLimiter } from "../../middlewares/rateLimiters.js";
 
 const router = Router();
 // projects.routes.ts
 router
   .route("/")
-  .post(validate(createProjectSchema), projectController.createProject)
+  .post(
+    sensitiveLimiter,
+    validate(createProjectSchema),
+    projectController.createProject,
+  )
   .get(
     validate(getAllProjectsQuerySchema, "query"),
     projectController.getAllProjects,

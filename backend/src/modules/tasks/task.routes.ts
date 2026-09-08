@@ -8,6 +8,7 @@ import {
 } from "./task.schema.js";
 import { validate } from "../../middlewares/validate.js";
 import { taskController } from "./task.controller.js";
+import { sensitiveLimiter } from "../../middlewares/rateLimiters.js";
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.use("/:projectId", checkProjectAccess);
 
 router.post(
   "/:projectId",
+  sensitiveLimiter,
   validate(createTaskBodySchema),
   taskController.createTask,
 );
