@@ -91,7 +91,13 @@ const processor = async (job: Job<SyncJobPayload>) => {
     }
 
     case "imagekit.delete": {
-      await imagekit.deleteFile(data.filePath);
+      // await imagekit.deleteFile(data.filePath);
+      const files = await imagekit.listFiles({
+        name: data.fileName,
+      });
+      if (files.length > 0 && "fileId" in files[0]) {
+        await imagekit.deleteFile(files[0].fileId);
+      }
       break;
     }
 

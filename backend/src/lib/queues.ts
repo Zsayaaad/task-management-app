@@ -35,7 +35,7 @@ export type StreamAnnounceJob = {
   senderId: string;
 };
 
-export type ImageKitDeleteJob = { filePath: string };
+export type ImageKitDeleteJob = { fileName: string };
 
 // The actual data structure enqueued
 export type SyncJobPayload =

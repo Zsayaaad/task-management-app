@@ -1,5 +1,4 @@
 import { NotFoundError, UnauthorizedError } from "../../errors/customErrors.js";
-import { imagekit } from "../../lib/imagekit.js";
 import { prisma } from "../../lib/prisma.js";
 import { syncQueue } from "../../lib/queues.js";
 import { comparePassword, hashPassword } from "../../utils/hash.js";
@@ -76,11 +75,11 @@ export const updateAvatar = async (userId: string, data: UpdateAvatarInput) => {
     // Extract file path from URL
     const urlParts = currentUser.avatarUrl.split("/");
     const fileName = urlParts[urlParts.length - 1];
-    const filePath = `task-management/avatars/${fileName}`;
+    // const filePath = `task-management/avatars/${fileName}`;
 
     await syncQueue.add("imagekit.delete", {
       name: "imagekit.delete",
-      data: { filePath },
+      data: { fileName },
     });
   }
 
@@ -173,11 +172,11 @@ export const deleteAccount = async (
     // Extract file path from URL
     const urlParts = user.avatarUrl.split("/");
     const fileName = urlParts[urlParts.length - 1];
-    const filePath = `task-management/avatars/${fileName}`;
+    // const filePath = `task-management/avatars/${fileName}`;
 
     await syncQueue.add("imagekit.delete", {
       name: "imagekit.delete",
-      data: { filePath },
+      data: { fileName },
     });
   }
 
