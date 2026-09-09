@@ -25,6 +25,9 @@ import { redisClient } from "./lib/redis.js";
 import { globalLimiter } from "./middlewares/rateLimiters.js";
 
 import { healthCheck } from "./modules/health/health.controller.js";
+import { syncWorker } from "./workers/sync.worker.js";
+import { syncQueue } from "./lib/queues.js";
+import { queueConnection } from "./lib/queueConnection.js";
 
 const env = getEnv();
 
@@ -93,8 +96,15 @@ const gracefulShutdown = (signal: string) => {
 
   server.close(async () => {
     try {
+      // 1. Stop accepting new jobs and wait for active jobs to finish
+      await syncWorker.close();
+      await syncQueue.close();
+
+      // 2. Close all connections
+      await queueConnection.quit();
       await redisClient.quit();
       await prisma.$disconnect();
+
       console.log("All connections closed. Bye 👋");
       process.exit(0);
     } catch (error) {

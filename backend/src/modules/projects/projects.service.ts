@@ -12,6 +12,7 @@ import {
   UpdateProjectInput,
 } from "./projects.schema.js";
 import { streamClient } from "../../lib/stream.js";
+import { syncQueue } from "../../lib/queues.js";
 
 /* =========================================================================
    PHASE 2 — STREAM SYNC
@@ -74,35 +75,50 @@ export const createProject = async (
       return newProject;
     });
 
-    // ---- STREAM SYNC: create the project's chat channel ----
-    try {
-      // Make sure the creator exists in Stream's user storage
-      await streamClient.upsertUsers([
-        {
-          id: creatorId,
-          name: project.creator.name,
-          role: project.creator.role === "ADMIN" ? "admin" : "user",
-        },
-      ]);
+    // try {
+    //   // Make sure the creator exists in Stream's user storage
+    //   await streamClient.upsertUsers([
+    //     {
+    //       id: creatorId,
+    //       name: project.creator.name,
+    //       role: project.creator.role === "ADMIN" ? "admin" : "user",
+    //     },
+    //   ]);
 
-      // Create the channel tied to this project
-      const channel = streamClient.channel(
-        "messaging",
-        `project-${project.id}`,
-        {
-          name: project.name,
-          created_by_id: creatorId,
-          members: [creatorId],
+    //   // Create the channel tied to this project
+    //   const channel = streamClient.channel(
+    //     "messaging",
+    //     `project-${project.id}`,
+    //     {
+    //       name: project.name,
+    //       created_by_id: creatorId,
+    //       members: [creatorId],
+    //     },
+    //   );
+    //   await channel.create();
+    // } catch (streamError) {
+    //   // DB is the source of truth — never fail the request because of Stream
+    //   console.error(
+    //     `Stream: failed to create channel for project ${project.id}`,
+    //     streamError,
+    //   );
+    // }
+
+    // ---- QUEUE: create the project's chat channel ----
+    await syncQueue.add(
+      "stream.channel.create",
+      {
+        name: "stream.channel.create",
+        data: {
+          projectId: project.id,
+          projectName: project.name,
+          creatorId,
+          creatorName: project.creator.name,
+          creatorRole: project.creator.role,
         },
-      );
-      await channel.create();
-    } catch (streamError) {
-      // DB is the source of truth — never fail the request because of Stream
-      console.error(
-        `Stream: failed to create channel for project ${project.id}`,
-        streamError,
-      );
-    }
+      },
+      { jobId: `channel-create-${project.id}` },
+    );
 
     return project;
   } catch (error: any) {
@@ -235,14 +251,19 @@ export const updateProject = async (
 
   // ---- STREAM SYNC: keep the channel name in sync with the project name ----
   if (data.name) {
-    try {
-      await getProjectChannel(projectId).update({ name: data.name });
-    } catch (streamError) {
-      console.error(
-        `Stream: failed to rename channel for project ${projectId}`,
-        streamError,
-      );
-    }
+    // try {
+    //   await getProjectChannel(projectId).update({ name: data.name });
+    // } catch (streamError) {
+    //   console.error(
+    //     `Stream: failed to rename channel for project ${projectId}`,
+    //     streamError,
+    //   );
+    // }
+
+    await syncQueue.add("stream.channel.update", {
+      name: "stream.channel.update",
+      data: { projectId, name: data.name },
+    });
   }
 
   return updatedProject;
@@ -253,15 +274,25 @@ export const deleteProject = async (projectId: string) => {
     where: { id: projectId },
   });
 
-  // ---- STREAM SYNC: delete the channel + its message history ----
-  try {
-    await getProjectChannel(projectId).delete();
-  } catch (streamError) {
-    console.error(
-      `Stream: failed to delete channel for project ${projectId}`,
-      streamError,
-    );
-  }
+  // // ---- STREAM SYNC: delete the channel + its message history ----
+  // try {
+  //   await getProjectChannel(projectId).delete();
+  // } catch (streamError) {
+  //   console.error(
+  //     `Stream: failed to delete channel for project ${projectId}`,
+  //     streamError,
+  //   );
+  // }
+
+  await syncQueue.add(
+    "stream.channel.delete",
+    {
+      name: "stream.channel.delete",
+      data: { projectId },
+    },
+    { jobId: `channel-delete-${projectId}` },
+  );
+
   return { message: "Project deleted successfully" };
 };
 
@@ -306,33 +337,44 @@ export const addMember = async (
     data: { userId: user.id, projectId },
   });
 
-  // ---- STREAM SYNC: give the new member access to the project chat ----
-  try {
-    // Ensure the user exists in Stream's user storage
-    await streamClient.upsertUsers([
-      {
-        id: user.id,
-        name: user.name,
-        role: user.role === "ADMIN" ? "admin" : "user",
-      },
-    ]);
+  // // ---- STREAM SYNC: give the new member access to the project chat ----
+  // try {
+  //   // Ensure the user exists in Stream's user storage
+  //   await streamClient.upsertUsers([
+  //     {
+  //       id: user.id,
+  //       name: user.name,
+  //       role: user.role === "ADMIN" ? "admin" : "user",
+  //     },
+  //   ]);
 
-    // Add them to the project's channel
-    const channel = getProjectChannel(projectId);
-    await channel.addMembers([user.id]);
+  //   // Add them to the project's channel
+  //   const channel = getProjectChannel(projectId);
+  //   await channel.addMembers([user.id]);
 
-    // Announce it in the chat (silent = no push/unread noise)
-    await channel.sendMessage({
-      text: `${user.name} was added to the project.`,
-      user_id: addedById,
-      silent: true,
-    });
-  } catch (streamError) {
-    console.error(
-      `Stream: failed to sync new member for project ${projectId}`,
-      streamError,
-    );
-  }
+  //   // Announce it in the chat (silent = no push/unread noise)
+  //   await channel.sendMessage({
+  //     text: `${user.name} was added to the project.`,
+  //     user_id: addedById,
+  //     silent: true,
+  //   });
+  // } catch (streamError) {
+  //   console.error(
+  //     `Stream: failed to sync new member for project ${projectId}`,
+  //     streamError,
+  //   );
+  // }
+
+  await syncQueue.add("stream.member.add", {
+    name: "stream.member.add",
+    data: {
+      projectId,
+      userId: user.id,
+      userName: user.name,
+      userRole: user.role,
+      addedById,
+    },
+  });
 
   return user;
 };
@@ -370,22 +412,32 @@ export async function removeMember(
     },
   });
 
-  // ---- STREAM SYNC: revoke chat access ----
-  try {
-    const channel = getProjectChannel(projectId);
-    await channel.removeMembers([userId]);
+  // // ---- STREAM SYNC: revoke chat access ----
+  // try {
+  //   const channel = getProjectChannel(projectId);
+  //   await channel.removeMembers([userId]);
 
-    await channel.sendMessage({
-      text: `${membership.user.name} was removed from the project`,
-      user_id: requesterId, // Recommended: specify who triggered the system message
-      silent: true, // Optional: prevent push notifications for system messages
-    });
-  } catch (streamError) {
-    console.error(
-      `Stream: failed to sync member removal for project ${projectId}`,
-      streamError,
-    );
-  }
+  //   await channel.sendMessage({
+  //     text: `${membership.user.name} was removed from the project`,
+  //     user_id: requesterId, // Recommended: specify who triggered the system message
+  //     silent: true, // Optional: prevent push notifications for system messages
+  //   });
+  // } catch (streamError) {
+  //   console.error(
+  //     `Stream: failed to sync member removal for project ${projectId}`,
+  //     streamError,
+  //   );
+  // }
+
+  await syncQueue.add("stream.member.remove", {
+    name: "stream.member.remove",
+    data: {
+      projectId,
+      userId,
+      userName: membership.user.name,
+      requesterId,
+    },
+  });
 }
 
 export const projectService = {

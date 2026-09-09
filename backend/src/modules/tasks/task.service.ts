@@ -10,27 +10,38 @@ import {
   GetAllTasksQueryInput,
   UpdateTaskInput,
 } from "./task.schema.js";
-import { streamClient } from "../../lib/stream.js";
+import { syncQueue } from "../../lib/queues.js";
 
 /* =========================================================================
    PHASE 4 — TASK EVENT ANNOUNCEMENTS
    Silent messages pushed to the project's chat channel whenever a
    task is created / updated / deleted.
    ========================================================================= */
+// const announceToProject = async (
+//   projectId: string,
+//   text: string,
+//   senderId: string,
+// ) => {
+//   try {
+//     const channel = streamClient.channel("messaging", `project-${projectId}`);
+//     await channel.sendMessage({ text, user_id: senderId, silent: true });
+//   } catch (streamError) {
+//     console.error(
+//       `Stream: failed to announce task event for project ${projectId}`,
+//       streamError,
+//     );
+//   }
+// };
+
 const announceToProject = async (
   projectId: string,
   text: string,
   senderId: string,
 ) => {
-  try {
-    const channel = streamClient.channel("messaging", `project-${projectId}`);
-    await channel.sendMessage({ text, user_id: senderId, silent: true });
-  } catch (streamError) {
-    console.error(
-      `Stream: failed to announce task event for project ${projectId}`,
-      streamError,
-    );
-  }
+  await syncQueue.add("stream.announce", {
+    name: "stream.announce",
+    data: { projectId, text, senderId },
+  });
 };
 
 export const createTask = async (

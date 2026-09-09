@@ -1,6 +1,7 @@
 import { NotFoundError, UnauthorizedError } from "../../errors/customErrors.js";
 import { imagekit } from "../../lib/imagekit.js";
 import { prisma } from "../../lib/prisma.js";
+import { syncQueue } from "../../lib/queues.js";
 import { comparePassword, hashPassword } from "../../utils/hash.js";
 import {
   ChangePasswordInput,
@@ -59,18 +60,28 @@ export const updateAvatar = async (userId: string, data: UpdateAvatarInput) => {
 
   // Delete old avatar from ImageKit if it exists
   if (currentUser?.avatarUrl) {
-    try {
-      // Extract file ID from URL (ImageKit URLs contain the file ID)
-      // Format: https://ik.imagekit.io/your_id/task-management/avatars/filename.jpg
-      const urlParts = currentUser.avatarUrl.split("/");
-      const fileName = urlParts[urlParts.length - 1];
-      const filePath = `task-management/avatars/${fileName}`;
+    // try {
+    //   // Extract file ID from URL (ImageKit URLs contain the file ID)
+    //   // Format: https://ik.imagekit.io/your_id/task-management/avatars/filename.jpg
+    //   const urlParts = currentUser.avatarUrl.split("/");
+    //   const fileName = urlParts[urlParts.length - 1];
+    //   const filePath = `task-management/avatars/${fileName}`;
 
-      await imagekit.deleteFile(filePath);
-    } catch (error) {
-      // Log but don't fail if delete fails (file might already be gone)
-      console.error("Failed to delete old avatar:", error);
-    }
+    //   await imagekit.deleteFile(filePath);
+    // } catch (error) {
+    //   // Log but don't fail if delete fails (file might already be gone)
+    //   console.error("Failed to delete old avatar:", error);
+    // }
+
+    // Extract file path from URL
+    const urlParts = currentUser.avatarUrl.split("/");
+    const fileName = urlParts[urlParts.length - 1];
+    const filePath = `task-management/avatars/${fileName}`;
+
+    await syncQueue.add("imagekit.delete", {
+      name: "imagekit.delete",
+      data: { filePath },
+    });
   }
 
   // Update user with new avatar URL
@@ -148,16 +159,26 @@ export const deleteAccount = async (
 
   // Delete avatar from ImageKit before deleting account
   if (user.avatarUrl) {
-    try {
-      // Extract file ID from URL (ImageKit URLs contain the file ID)
-      const urlParts = user.avatarUrl.split("/");
-      const fileName = urlParts[urlParts.length - 1];
-      const filePath = `task-management/avatars/${fileName}`;
+    // try {
+    //   // Extract file ID from URL (ImageKit URLs contain the file ID)
+    //   const urlParts = user.avatarUrl.split("/");
+    //   const fileName = urlParts[urlParts.length - 1];
+    //   const filePath = `task-management/avatars/${fileName}`;
 
-      await imagekit.deleteFile(filePath);
-    } catch (error) {
-      console.error("Failed to delete avatar on account deletion:", error);
-    }
+    //   await imagekit.deleteFile(filePath);
+    // } catch (error) {
+    //   console.error("Failed to delete avatar on account deletion:", error);
+    // }
+
+    // Extract file path from URL
+    const urlParts = user.avatarUrl.split("/");
+    const fileName = urlParts[urlParts.length - 1];
+    const filePath = `task-management/avatars/${fileName}`;
+
+    await syncQueue.add("imagekit.delete", {
+      name: "imagekit.delete",
+      data: { filePath },
+    });
   }
 
   await prisma.user.delete({
