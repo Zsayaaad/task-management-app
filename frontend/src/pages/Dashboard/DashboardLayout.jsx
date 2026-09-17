@@ -101,8 +101,8 @@ const DashboardLayout = ({ queryClient }) => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-lg font-button text-sm transition-all relative ${
                       isActive
-                        ? "bg-surface-bright text-primary font-semibold border-l-4 border-primary pl-2"
-                        : "text-text-muted hover:text-on-surface hover:bg-surface-dim"
+                        ? "bg-primary-container text-primary font-semibold border-l-4 border-primary pl-2"
+                        : "text-text-muted hover:text-on-surface hover:bg-surface-bright/60"
                     }`
                   }
                 >
@@ -117,8 +117,8 @@ const DashboardLayout = ({ queryClient }) => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-lg font-button text-sm transition-all relative ${
                       isActive
-                        ? "bg-surface-bright text-primary font-semibold border-l-4 border-primary pl-2"
-                        : "text-text-muted hover:text-on-surface hover:bg-surface-dim"
+                        ? "bg-primary-container text-primary font-semibold border-l-4 border-primary pl-2"
+                        : "text-text-muted hover:text-on-surface hover:bg-surface-bright/60"
                     }`
                   }
                 >
@@ -133,8 +133,8 @@ const DashboardLayout = ({ queryClient }) => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-lg font-button text-sm transition-all relative ${
                       isActive
-                        ? "bg-surface-bright text-primary font-semibold border-l-4 border-primary pl-2"
-                        : "text-text-muted hover:text-on-surface hover:bg-surface-dim"
+                        ? "bg-primary-container text-primary font-semibold border-l-4 border-primary pl-2"
+                        : "text-text-muted hover:text-on-surface hover:bg-surface-bright/60"
                     }`
                   }
                 >
@@ -157,7 +157,7 @@ const DashboardLayout = ({ queryClient }) => {
                   <span
                     className={`inline-block font-label-caps text-[10px] px-2 py-0.5 rounded-full ${
                       user?.role === "ADMIN"
-                        ? "bg-primary/20 text-primary border border-primary/30"
+                        ? "bg-amber-50 text-amber-700 border border-amber-200"
                         : "bg-surface-bright text-text-muted border border-border"
                     }`}
                   >

@@ -27,7 +27,7 @@ const Chatting = () => {
   return (
     // Fixed height so MessageList scrolls internally instead of the page
     <div className="h-[calc(100vh-10.5rem)] md:h-[calc(100vh-5rem)]">
-      <Chat client={chatClient} theme="messaging dark">
+      <Chat client={chatClient} theme="messaging light">
         <ChannelList filters={filters} sort={sort} options={options} />
         <Channel
           EmptyPlaceholder={

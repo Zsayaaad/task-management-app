@@ -20,21 +20,21 @@ const TasksContainer = () => {
     switch (priority) {
       case "HIGH":
       case "URGENT":
-        return "bg-danger/15 text-danger border-danger/30";
+        return "bg-red-50 text-red-700 border-red-200";
       case "MEDIUM":
-        return "bg-amber-500/15 text-amber-400 border-amber-500/30";
+        return "bg-amber-50 text-amber-700 border-amber-200";
       case "LOW":
       default:
-        return "bg-blue-500/15 text-blue-400 border-blue-500/30";
+        return "bg-blue-50 text-blue-700 border-blue-200";
     }
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
       case "DONE":
-        return "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case "IN_PROGRESS":
-        return "bg-primary/15 text-primary border-primary/30";
+        return "bg-sky-50 text-primary border-sky-200";
       case "TODO":
       default:
         return "bg-surface-bright text-text-muted border-border";
@@ -140,7 +140,7 @@ const TasksContainer = () => {
 
       {/* Delete Task Confirmation Modal */}
       {selectedTaskToDelete && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-surface-container border border-border rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 className="font-section-heading text-lg font-bold text-on-surface">
               Delete Task

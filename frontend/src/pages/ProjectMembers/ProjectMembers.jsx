@@ -102,7 +102,7 @@ const ProjectMembers = () => {
 
       {/* Confirmation Modal */}
       {selectedMember && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-surface-container border border-border rounded-xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 className="font-section-heading text-lg font-bold text-on-surface">
               Remove Member

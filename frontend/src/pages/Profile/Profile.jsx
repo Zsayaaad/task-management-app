@@ -26,10 +26,10 @@ const Profile = () => {
   const getRoleBadgeStyle = (role) => {
     switch (role) {
       case "ADMIN":
-        return "bg-amber-500/15 text-amber-400 border-amber-500/30";
+        return "bg-amber-50 text-amber-700 border-amber-200";
       case "MEMBER":
       default:
-        return "bg-primary/15 text-primary border-primary/30";
+        return "bg-blue-50 text-primary border-blue-200";
     }
   };
 
