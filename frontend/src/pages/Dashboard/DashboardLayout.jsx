@@ -79,17 +79,17 @@ const DashboardLayout = ({ queryClient }) => {
       <DashboardContext.Provider value={{ user, logoutUser }}>
         <div className="min-h-screen bg-background text-text-body flex flex-col md:flex-row">
           {/* ================= DESKTOP SIDEBAR ================= */}
-          <aside className="hidden md:flex flex-col w-[240px] shrink-0 bg-surface-container border-r border-border h-screen sticky top-0 justify-between p-4 z-20">
+          <aside className="hidden md:flex flex-col w-75 shrink-0 bg-surface-container border-r border-border h-screen sticky top-0 justify-between p-4 z-20">
             <div className="space-y-6">
               {/* Logo */}
-              <div className="flex items-center gap-2.5 px-2 py-1">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-on-primary shadow-md shadow-primary/20">
+              <div className="flex items-center gap-2.5 px-2 py-1 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-on-primary shadow-md shadow-primary/20 shrink-0">
                   <span className="material-symbols-outlined text-xl">
                     bolt
                   </span>
                 </div>
-                <span className="font-page-title text-xl text-on-surface tracking-tight">
-                  ProjectFlow
+                <span className="font-bold text-base text-on-surface tracking-tight truncate">
+                  Project Management
                 </span>
               </div>
 
@@ -184,7 +184,7 @@ const DashboardLayout = ({ queryClient }) => {
                 <span className="material-symbols-outlined text-lg">bolt</span>
               </div>
               <span className="font-page-title text-lg text-on-surface">
-                ProjectFlow
+                Project Management
               </span>
             </div>
             <button
