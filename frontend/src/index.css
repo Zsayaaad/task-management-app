@@ -135,3 +135,33 @@
 .str-chat {
   height: 100%;
 }
+
+/* Full-width conversation list view */
+.chat-list-full-view .str-chat {
+  width: 100%;
+  height: 100%;
+}
+
+.chat-list-full-view .str-chat__channel-list {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 100% !important;
+  border-inline-end: none !important;
+  background-color: transparent;
+}
+
+.chat-list-full-view .str-chat__channel-list-inner {
+  padding-bottom: 0;
+}
+
+/* Full-width single conversation view */
+.chat-conversation-view .str-chat {
+  width: 100%;
+  height: 100%;
+}
+
+.chat-conversation-view .str-chat__channel {
+  width: 100%;
+  height: 100%;
+  flex: 1 1 100%;
+}
